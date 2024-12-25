@@ -1,0 +1,14 @@
+.login-container {
+    display: grid;
+    grid-template-columns: 1fr minmax(10rem, 30rem) 1fr;
+    place-items: center;
+    height: 100vh;
+    padding: 20px;
+    #login-form {
+        grid-column: 2 / 3;
+        width: 100%;
+        input {
+            width: 100%;
+        }
+    }
+}

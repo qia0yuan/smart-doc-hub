@@ -1,0 +1,29 @@
+<div class="login-container">
+    <form id="login-form" class="d-flex flex-column gap-3" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+        <h1>Login</h1>
+        <div>
+            <p-floatlabel variant="in">
+                <p-iconfield>
+                    <input id="email" pInputText formControlName="email" />
+                    <p-inputicon class="pi pi-times" style="cursor: pointer;" />
+                </p-iconfield>
+                <label for="email">Email</label>
+            </p-floatlabel>
+        </div>
+        <div>
+            <p-floatlabel variant="in">
+                <p-iconfield>
+                    <input id="password" pInputText formControlName="password" />
+                    <p-inputicon class="pi pi-times" style="cursor: pointer;" />
+                </p-iconfield>
+                <label for="password">Password</label>
+            </p-floatlabel>
+        </div>
+        <a routerLink="/forgot-password">Forgot Password?</a>
+        <div class="d-flex gap-3">
+            <p-button type="submit" label="Login"></p-button>
+            <p-button label="Subscribe"></p-button>
+        </div>
+    </form>
+    <!-- <div *ngIf="error">{{ error }}</div> -->
+</div>
