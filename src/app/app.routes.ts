@@ -17,6 +17,21 @@ export const routes: Routes = [
         path: 'home',
         component: HomeComponent,
         canActivate: [authGuard],
+        children: [
+            {
+                path: '',
+                redirectTo: 'docs',
+                pathMatch: 'full',
+            },
+            {
+                path: 'docs',
+                loadComponent: () => import('./components/doc-management/doc-management.component').then(m => m.DocManagementComponent),
+            },
+            {
+                path: 'users',
+                loadComponent: () => import('./components/user-management/user-management.component').then(m => m.UserManagementComponent),
+            }
+        ]
     },
     {
         path: 'forgot-password',

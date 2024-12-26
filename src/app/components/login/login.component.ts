@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { FloatLabel } from 'primeng/floatlabel';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
@@ -27,7 +27,9 @@ export class LoginComponent {
         password: new FormControl(''),
     });
 
+    constructor(private router: Router) {}
+
     onSubmit() {
-        console.warn(this.loginForm.value);
+        this.router.navigate(['/home']);
     }
 }

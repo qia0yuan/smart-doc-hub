@@ -1,0 +1,17 @@
+:host ::ng-deep {
+    p-menubar > div {
+        & > p-menubarsub {
+            width: 100%;
+            & > ul {
+                width: 100%;
+                & > li:last-child {
+                    margin-left: auto;
+                }
+            }
+        }
+    }
+}
+
+div.card {
+    margin: 20px;
+}

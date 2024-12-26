@@ -1,0 +1,35 @@
+<div class="doc-management-container">
+    <div class="d-flex gap-3 justify-content-end mb-3">
+        <p-button label="Create"></p-button>
+        <p-button label="Update"></p-button>
+        <p-button label="Delete"></p-button>
+    </div>
+    <div class="card">
+        <p-table
+            [value]="products"
+            [(selection)]="selectedProducts"
+            dataKey="id"
+            [tableStyle]="{'min-width': '50rem'}">
+                <ng-template #header>
+                    <tr>
+                        <th style="width: 4rem"><p-tableHeaderCheckbox /></th>
+                        <th>Document ID</th>
+                        <th>Name</th>
+                        <th>Category</th>
+                        <th>Date Modified</th>
+                    </tr>
+                </ng-template>
+                <ng-template #body let-product>
+                    <tr>
+                        <td>
+                            <p-tableCheckbox [value]="product" />
+                        </td>
+                        <td>{{product.id}}</td>
+                        <td>{{product.name}}</td>
+                        <td>{{product.category}}</td>
+                        <td>{{product.date}}</td>
+                    </tr>
+                </ng-template>
+        </p-table>
+    </div>
+</div>

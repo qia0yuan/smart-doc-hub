@@ -4,7 +4,7 @@ import { CanActivateFn, Router } from '@angular/router';
 export const authGuard: CanActivateFn = (route, state) => {
   const isAuthenticated = () => {
     // Check if the user is authenticated
-    return false;
+    return true;
   };
   if (isAuthenticated()) {
     return true;
