@@ -1,0 +1,10 @@
+:host ::ng-deep {
+    p-card {
+        .p-card {
+            height: 100vh;
+            .p-card-body {
+                padding: 0;
+            }
+        }
+    }
+}
