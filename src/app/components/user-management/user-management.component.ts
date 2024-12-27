@@ -1,16 +1,18 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { TableModule } from 'primeng/table';
+import { ProfileComponent } from "./profile/profile.component";
 
 @Component({
   selector: 'app-user-management',
-  imports: [TableModule, ButtonModule],
+  imports: [TableModule, ButtonModule, ProfileComponent],
   templateUrl: './user-management.component.html',
   styleUrl: './user-management.component.scss'
 })
 export class UserManagementComponent {
   users!: any[];
   selectedUsers!: any;
+  action = signal<string>('');
 
   ngOnInit() {
       this.users = [
@@ -36,5 +38,9 @@ export class UserManagementComponent {
               date: '09/01/2021',
           },
       ];
+  }
+
+  profileAction(action: string) {
+    this.action.set(action);
   }
 }

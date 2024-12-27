@@ -1,5 +1,5 @@
 <div class="login-container">
-    <form id="login-form" class="d-flex flex-column gap-3" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+    <form id="login-form" class="flex flex-column gap-3" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
         <h1>Login</h1>
         <div>
             <p-floatlabel variant="in">
@@ -20,10 +20,11 @@
             </p-floatlabel>
         </div>
         <a routerLink="/forgot-password">Forgot Password?</a>
-        <div class="d-flex gap-3">
+        <div class="flex gap-3">
             <p-button type="submit" label="Login"></p-button>
-            <p-button label="Subscribe"></p-button>
+            <p-button label="Subscribe" (click)="action.set('Create')"></p-button>
         </div>
     </form>
     <!-- <div *ngIf="error">{{ error }}</div> -->
 </div>
+<app-profile [action]="action()" (closed)="action.set('')"></app-profile>   
