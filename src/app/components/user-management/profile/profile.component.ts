@@ -1,4 +1,4 @@
-import { Component, effect, input, output } from '@angular/core';
+import { Component, effect, input, output, signal } from '@angular/core';
 import { Dialog } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
@@ -12,16 +12,19 @@ import { InputTextModule } from 'primeng/inputtext';
 export class ProfileComponent {
   action = input<string>('');
   closed = output();
-  visible = false;
+  visible = signal<boolean>(false);
+  closeIconClicked = effect(() => {
+    !this.visible() && this.closed.emit();
+  });
 
   constructor() {
     effect(() => {
-      this.visible = this.action() ? true : false;
+      this.visible.set(this.action() ? true : false);
     });
   }
 
   onBtnClick(action: string) {
     this.closed.emit();
-    this.visible = false;
+    this.visible.set(false);
   }
 }

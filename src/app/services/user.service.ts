@@ -12,4 +12,9 @@ export class UserService {
     const root = document.querySelector('html');
     root?.classList.toggle('dark-mode', this.themeColorMode() === 'moon');
   }
+
+  getCurrentThemeBackground() {
+    const root = document.querySelector('html');
+    return root?.classList.contains('dark-mode') ? 'moon' : 'sun';
+  }
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, effect, OnInit, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { MenuItem } from 'primeng/api';
 import { Menubar } from 'primeng/menubar';
@@ -28,24 +28,30 @@ import { UserService } from '../../services/user.service';
 export class HomeComponent implements OnInit {
     items: MenuItem[] | undefined;
     action = signal<string>('');
-    visible = false;
-    checked = true;
+    visible = signal<boolean>(false);
+    checked = signal<boolean>(true);
 
-    constructor(private userService: UserService) {}
+    constructor(private userService: UserService) {
+        effect(() => {
+            this.userService.themeColorMode.set(
+                this.checked() ? 'sun' : 'moon'
+            );
+        });
+    }
 
     ngOnInit() {
-        this.checked =
-            this.userService.themeColorMode() === 'sun' ? true : false;
         this.items = [
             {
                 label: 'Documents',
                 icon: 'pi pi-file-o',
                 routerLink: '/home/docs',
+                routerLinkActiveOptions: { exact: true },
             },
             {
                 label: 'Users',
                 icon: 'pi pi-users',
                 routerLink: '/home/users',
+                routerLinkActiveOptions: { exact: true },
             },
             {
                 label: 'George',
@@ -60,7 +66,12 @@ export class HomeComponent implements OnInit {
                         label: 'Settings',
                         icon: 'pi pi-cog',
                         command: () => {
-                            this.visible = true;
+                            this.checked.set(
+                                this.userService.getCurrentThemeBackground() === 'sun'
+                                    ? true
+                                    : false
+                            );
+                            this.visible.set(true);
                         },
                     },
                     {
@@ -73,15 +84,10 @@ export class HomeComponent implements OnInit {
         ];
     }
 
-    onThemeBgChange(event: boolean) {
-        this.checked = event;
-        this.userService.themeColorMode.set(event ? 'sun' : 'moon');
-    }
-
     onBtnClick(action: string) {
         if (action === 'save') {
             this.userService.setThemeBackground();
         }
-        this.visible = false;
+        this.visible.set(false);
     }
 }

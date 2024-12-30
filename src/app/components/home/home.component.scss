@@ -6,6 +6,9 @@
                 width: 100%;
                 & > li:last-child {
                     margin-left: auto;
+                    ul.p-menubar-submenu {
+                        right: 0;
+                    }
                 }
             }
         }

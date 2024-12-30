@@ -12,7 +12,7 @@
         <label for="themebg" class="font-semibold w-24">Theme Background</label>
         <div class="flex justify-center gap-4 w-full">
             <i class="pi pi-moon"></i>
-            <p-toggleswitch [ngModel]="checked" (ngModelChange)="onThemeBgChange($event)" />
+            <p-toggleswitch [ngModel]="checked()" (ngModelChange)="checked.set($event)" />
             <i class="pi pi-sun"></i>
         </div>
     </div>

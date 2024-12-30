@@ -11,3 +11,8 @@
     @tailwind components;
     @tailwind utilities;
 }
+
+.p-menubar-item-link-active {
+    background: var(--p-menubar-item-focus-background);
+    font-weight: bold;
+}

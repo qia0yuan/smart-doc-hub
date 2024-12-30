@@ -1,4 +1,4 @@
-<p-dialog header="{{ action() }}" [modal]="true" [visible]="visible" (visibleChange)="onBtnClick('cancel')" [style]="{ width: '40rem' }">
+<p-dialog header="{{ action() }}" [modal]="true" [(visible)]="visible" [style]="{ width: '40rem' }">
     <span class="p-text-secondary block mb-4">{{ action() }} your information.</span>
     <div class="flex items-center gap-4 mb-4">
         <label for="firstname" class="font-semibold w-24">First Name</label>

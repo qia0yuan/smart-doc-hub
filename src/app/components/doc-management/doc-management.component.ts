@@ -1,16 +1,108 @@
-import { Component } from '@angular/core';
-import { Button, ButtonModule } from 'primeng/button';
+import { Component, signal } from '@angular/core';
+import { ButtonModule } from 'primeng/button';
 import { TableModule } from 'primeng/table';
+import { MessageService } from 'primeng/api';
+import { FileUpload } from 'primeng/fileupload';
+import { ToastModule } from 'primeng/toast';
+import { CommonModule } from '@angular/common';
+import { Dialog } from 'primeng/dialog';
+import { ProgressBar } from 'primeng/progressbar';
+import { PrimeNG } from 'primeng/config';
+import { BadgeModule } from 'primeng/badge';
+
+interface UploadEvent {
+    originalEvent: Event;
+    files: File[];
+}
 
 @Component({
     selector: 'app-doc-management',
-    imports: [TableModule, ButtonModule],
+    imports: [
+        TableModule,
+        ButtonModule,
+        FileUpload,
+        ToastModule,
+        CommonModule,
+        Dialog,
+        ProgressBar,
+        BadgeModule,
+    ],
     templateUrl: './doc-management.component.html',
     styleUrl: './doc-management.component.scss',
+    providers: [MessageService],
 })
 export class DocManagementComponent {
     products!: any[];
     selectedProducts!: any;
+    visible = signal<boolean>(false);
+    uploadedFiles: any[] = [];
+    totalSize: number = 0;
+    totalSizePercent: number = 0;
+
+    constructor(
+        private messageService: MessageService,
+        private config: PrimeNG
+    ) {}
+
+    choose(event: any, callback: () => void) {
+        callback();
+    }
+
+    uploadEvent(callback: () => void) {
+        callback();
+    }
+
+    onSelectedFiles(event: any) {
+        for (let file of event.files) {
+            this.uploadedFiles.push(file);
+        }
+
+        this.messageService.add({
+            severity: 'info',
+            summary: 'File Uploaded',
+            detail: '',
+        });
+    }
+
+    formatSize(bytes: number) {
+        const k = 1024;
+        const dm = 3;
+        const sizes = this.config.translation.fileSizeTypes;
+        if (bytes === 0) {
+            return `0 ${sizes?.[0]}`;
+        }
+
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        const formattedSize = parseFloat((bytes / Math.pow(k, i)).toFixed(dm));
+
+        return `${formattedSize} ${sizes?.[i]}`;
+    }
+
+    onRemoveTemplatingFile(
+        event: any,
+        file: any,
+        removeFileCallback: any,
+        index: any
+    ) {
+        removeFileCallback(event, index);
+        this.totalSize -= parseInt(this.formatSize(file.size));
+        this.totalSizePercent = this.totalSize / 10;
+    }
+
+    onClearTemplatingUpload(clear: any) {
+        clear();
+        this.totalSize = 0;
+        this.totalSizePercent = 0;
+    }
+
+    onTemplatedUpload() {
+        this.messageService.add({
+            severity: 'info',
+            summary: 'Success',
+            detail: 'File Uploaded',
+            life: 3000,
+        });
+    }
 
     ngOnInit() {
         this.products = [
