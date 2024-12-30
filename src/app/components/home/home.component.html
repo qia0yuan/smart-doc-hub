@@ -12,7 +12,7 @@
         <label for="themebg" class="font-semibold w-24">Theme Background</label>
         <div class="flex justify-center gap-4 w-full">
             <i class="pi pi-moon"></i>
-            <p-toggleswitch [ngModel]="checked()" (ngModelChange)="checked.set($event)" />
+            <p-toggleswitch [(ngModel)]="checked" />
             <i class="pi pi-sun"></i>
         </div>
     </div>
@@ -21,4 +21,24 @@
         <p-button label="Save" (click)="onBtnClick('save')" />
     </div>
 </p-dialog>
+<div class="flex justify-center">
+    <p-toast />
+    <p-confirmdialog #cd>
+        <ng-template #headless let-message let-onAccept="onAccept" let-onReject="onReject">
+            <div class="flex flex-col items-center w-full p-8 border-surface-200 rounded">
+                <div
+                    class="rounded-full bg-primary text-primary-contrast inline-flex justify-center items-center h-24 w-24 -mt-20"
+                >
+                    <i class="pi pi-question !text-5xl"></i>
+                </div>
+                <span class="font-bold text-2xl block mb-2 mt-6">{{ message.header }}</span>
+                <p class="mb-0">{{ message.message }}</p>
+                <div class="flex items-center gap-2 mt-6">
+                    <p-button label="Save" (onClick)="onAccept()" styleClass="w-32"></p-button>
+                    <p-button label="Cancel" [outlined]="true" (onClick)="onReject()" styleClass="w-32"></p-button>
+                </div>
+            </div>
+        </ng-template>
+    </p-confirmdialog>
+</div>
 <router-outlet />

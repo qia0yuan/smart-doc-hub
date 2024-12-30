@@ -1,10 +1,15 @@
 import { Injectable, signal } from '@angular/core';
+import { User } from '../models/models';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
   themeColorMode = signal<string>('sun');
+  userDetails = signal<User>({
+    token: '',
+  });
+  confirmDialog = signal<boolean>(false);
 
   constructor() { }
 

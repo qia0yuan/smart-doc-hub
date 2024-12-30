@@ -9,11 +9,8 @@ import { Dialog } from 'primeng/dialog';
 import { ProgressBar } from 'primeng/progressbar';
 import { PrimeNG } from 'primeng/config';
 import { BadgeModule } from 'primeng/badge';
-
-interface UploadEvent {
-    originalEvent: Event;
-    files: File[];
-}
+import { User } from '../../models/models';
+import { UserService } from '../../services/user.service';
 
 @Component({
     selector: 'app-doc-management',
@@ -41,7 +38,8 @@ export class DocManagementComponent {
 
     constructor(
         private messageService: MessageService,
-        private config: PrimeNG
+        private config: PrimeNG,
+        private userService: UserService,
     ) {}
 
     choose(event: any, callback: () => void) {
@@ -102,6 +100,14 @@ export class DocManagementComponent {
             detail: 'File Uploaded',
             life: 3000,
         });
+    }
+
+    onDownload() {
+        this.userService.confirmDialog.set(true);
+    }
+
+    onDelete() {
+        this.userService.confirmDialog.set(true);
     }
 
     ngOnInit() {

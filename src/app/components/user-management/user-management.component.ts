@@ -2,6 +2,7 @@ import { Component, signal } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { TableModule } from 'primeng/table';
 import { ProfileComponent } from "./profile/profile.component";
+import { UserService } from '../../services/user.service';
 
 @Component({
   selector: 'app-user-management',
@@ -13,6 +14,8 @@ export class UserManagementComponent {
   users!: any[];
   selectedUsers!: any;
   action = signal<string>('');
+
+  constructor(private userService: UserService) {}
 
   ngOnInit() {
       this.users = [
@@ -42,5 +45,9 @@ export class UserManagementComponent {
 
   profileAction(action: string) {
     this.action.set(action);
+  }
+
+  onDelete() {
+      this.userService.confirmDialog.set(true);
   }
 }

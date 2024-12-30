@@ -1,9 +1,9 @@
 <div class="doc-management-container">
     <div class="flex gap-3 justify-content-end mb-3">
         <p-button label="Upload" (click)="visible.set(true)"></p-button>
-        <p-button label="Download"></p-button>
+        <p-button label="Download" (click)="onDownload()"></p-button>
         <p-button label="Share"></p-button>
-        <p-button label="Delete"></p-button>
+        <p-button label="Delete" (click)="onDelete()"></p-button>
     </div>
     <div class="card">
         <p-table
