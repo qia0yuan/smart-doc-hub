@@ -2,7 +2,7 @@
     <div class="flex gap-3 justify-content-end mb-3">
         <p-button label="Upload" (click)="visible.set(true)"></p-button>
         <p-button label="Download" (click)="onDownload()"></p-button>
-        <p-button label="Share"></p-button>
+        <p-button label="Share" (click)="onShare()"></p-button>
         <p-button label="Delete" (click)="onDelete()"></p-button>
     </div>
     <div class="card">
@@ -36,7 +36,6 @@
 </div>
 <p-dialog header="File Upload" [modal]="true" [visible]="visible()" (visibleChange)="visible.set($event)" [style]="{ width: '40rem' }">
     <div class="card">
-        <p-toast />
         <p-fileupload (onUpload)="onTemplatedUpload()" (onSelect)="onSelectedFiles($event)" [multiple]="true" accept="image/*" chooseLabel="Choose" cancelLabel="Cancel" uploadLabel="Upload"> 
             <ng-template #header let-files let-chooseCallback="chooseCallback" let-clearCallback="clearCallback" let-uploadCallback="uploadCallback">
                 <div class="flex flex-wrap justify-between items-center flex-1 gap-4">

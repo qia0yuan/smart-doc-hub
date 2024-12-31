@@ -4,3 +4,8 @@ export interface User {
     // phone: string;
     token: string;
 }
+
+export interface ToastConfig {
+    type?: string;
+    message?: string;
+}

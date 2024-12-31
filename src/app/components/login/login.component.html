@@ -4,8 +4,8 @@
         <div>
             <p-floatlabel variant="in">
                 <p-iconfield>
-                    <input id="email" pInputText formControlName="email" />
-                    <p-inputicon class="pi pi-times" style="cursor: pointer;" />
+                    <input type="email" id="email" pInputText formControlName="email" />
+                    <p-inputicon class="pi pi-times" style="cursor: pointer;" (click)="clear('email')" />
                 </p-iconfield>
                 <label for="email">Email</label>
             </p-floatlabel>
@@ -13,8 +13,8 @@
         <div>
             <p-floatlabel variant="in">
                 <p-iconfield>
-                    <input id="password" pInputText formControlName="password" />
-                    <p-inputicon class="pi pi-times" style="cursor: pointer;" />
+                    <input type="password" id="password" pInputText formControlName="password" />
+                    <p-inputicon class="pi pi-times" style="cursor: pointer;" (click)="clear('password')" />
                 </p-iconfield>
                 <label for="password">Password</label>
             </p-floatlabel>

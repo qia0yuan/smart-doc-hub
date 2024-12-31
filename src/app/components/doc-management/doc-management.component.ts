@@ -1,15 +1,12 @@
 import { Component, signal } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { TableModule } from 'primeng/table';
-import { MessageService } from 'primeng/api';
 import { FileUpload } from 'primeng/fileupload';
 import { ToastModule } from 'primeng/toast';
 import { CommonModule } from '@angular/common';
 import { Dialog } from 'primeng/dialog';
-import { ProgressBar } from 'primeng/progressbar';
 import { PrimeNG } from 'primeng/config';
 import { BadgeModule } from 'primeng/badge';
-import { User } from '../../models/models';
 import { UserService } from '../../services/user.service';
 
 @Component({
@@ -21,12 +18,10 @@ import { UserService } from '../../services/user.service';
         ToastModule,
         CommonModule,
         Dialog,
-        ProgressBar,
         BadgeModule,
     ],
     templateUrl: './doc-management.component.html',
     styleUrl: './doc-management.component.scss',
-    providers: [MessageService],
 })
 export class DocManagementComponent {
     products!: any[];
@@ -37,7 +32,6 @@ export class DocManagementComponent {
     totalSizePercent: number = 0;
 
     constructor(
-        private messageService: MessageService,
         private config: PrimeNG,
         private userService: UserService,
     ) {}
@@ -55,11 +49,10 @@ export class DocManagementComponent {
             this.uploadedFiles.push(file);
         }
 
-        this.messageService.add({
-            severity: 'info',
-            summary: 'File Uploaded',
-            detail: '',
-        });
+        this.userService.openToast.update(() => ({
+            type: 'info',
+            message: '',
+        }));
     }
 
     formatSize(bytes: number) {
@@ -94,12 +87,10 @@ export class DocManagementComponent {
     }
 
     onTemplatedUpload() {
-        this.messageService.add({
-            severity: 'info',
-            summary: 'Success',
-            detail: 'File Uploaded',
-            life: 3000,
-        });
+        this.userService.openToast.update(() => ({
+            type: 'info',
+            message: 'File Uploaded',
+        }));
     }
 
     onDownload() {
@@ -108,6 +99,10 @@ export class DocManagementComponent {
 
     onDelete() {
         this.userService.confirmDialog.set(true);
+    }
+
+    onShare() {
+        this.userService.showSpinner.set(true);
     }
 
     ngOnInit() {

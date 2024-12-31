@@ -1,6 +1,6 @@
 import { Component, effect, OnInit, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
+import { ConfirmationService, MenuItem } from 'primeng/api';
 import { Menubar } from 'primeng/menubar';
 import { Dialog } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
@@ -28,7 +28,7 @@ import { ToastModule } from 'primeng/toast';
     ],
     templateUrl: './home.component.html',
     styleUrl: './home.component.scss',
-    providers: [MessageService, ConfirmationService],
+    providers: [ConfirmationService],
 })
 export class HomeComponent implements OnInit {
     items: MenuItem[] | undefined;
@@ -38,7 +38,6 @@ export class HomeComponent implements OnInit {
 
     constructor(
         private userService: UserService,
-        private messageService: MessageService,
         private confirmationService: ConfirmationService
     ) {
         effect(() => {
@@ -107,19 +106,17 @@ export class HomeComponent implements OnInit {
             header: 'Are you sure?',
             message: 'Please confirm to proceed.',
             accept: () => {
-                this.messageService.add({
-                    severity: 'info',
-                    summary: 'Confirmed',
-                    detail: 'You have accepted',
-                });
+                this.userService.openToast.update(() => ({
+                    type: 'info',
+                    message: 'You have accepted',
+                }));
                 this.userService.confirmDialog.set(false);
             },
             reject: () => {
-                this.messageService.add({
-                    severity: 'info',
-                    summary: 'Rejected',
-                    detail: 'You have rejected',
-                });
+                this.userService.openToast.update(() => ({
+                    type: 'info',
+                    message: 'You have rejected',
+                }));
                 this.userService.confirmDialog.set(false);
             },
         });
