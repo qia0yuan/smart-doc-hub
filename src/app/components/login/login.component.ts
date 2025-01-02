@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, computed, signal } from '@angular/core';
 import {
     FormBuilder,
     FormControl,
@@ -15,6 +15,7 @@ import { InputIcon } from 'primeng/inputicon';
 import { ProfileComponent } from '../user-management/profile/profile.component';
 import { UserService } from '../../services/user.service';
 import { ServiceCallsService } from '../../services/service-calls.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
     selector: 'app-login',
@@ -27,6 +28,7 @@ import { ServiceCallsService } from '../../services/service-calls.service';
         IconField,
         InputIcon,
         ProfileComponent,
+        CommonModule,
     ],
     templateUrl: './login.component.html',
     styleUrl: './login.component.scss',

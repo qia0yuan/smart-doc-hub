@@ -7,5 +7,6 @@ export interface User {
 
 export interface ToastConfig {
     type?: string;
+    title?: string;
     message?: string;
 }

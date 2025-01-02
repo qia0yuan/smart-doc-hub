@@ -102,7 +102,7 @@ export class DocManagementComponent {
     }
 
     onShare() {
-        this.userService.showSpinner.set(true);
+        // this.userService.showSpinner.set(true);
     }
 
     ngOnInit() {
@@ -129,5 +129,6 @@ export class DocManagementComponent {
                 date: '09/01/2021',
             },
         ];
+        this.userService.showSpinner.set(false);
     }
 }

@@ -16,3 +16,8 @@
     background: var(--p-menubar-item-focus-background);
     font-weight: bold;
 }
+
+.field-required::after {
+    content: " *";
+    color: red;
+}

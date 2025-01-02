@@ -5,7 +5,7 @@
             <p-floatlabel variant="in">
                 <p-iconfield>
                     <input type="email" id="email" pInputText formControlName="email" />
-                    <p-inputicon class="pi pi-times" style="cursor: pointer;" (click)="clear('email')" />
+                    <p-inputicon *ngIf="this.loginForm.get('email')?.value" class="pi pi-times" style="cursor: pointer;" (click)="clear('email')" />
                 </p-iconfield>
                 <label for="email">Email</label>
             </p-floatlabel>
@@ -14,7 +14,7 @@
             <p-floatlabel variant="in">
                 <p-iconfield>
                     <input type="password" id="password" pInputText formControlName="password" />
-                    <p-inputicon class="pi pi-times" style="cursor: pointer;" (click)="clear('password')" />
+                    <p-inputicon *ngIf="this.loginForm.get('password')?.value" class="pi pi-times" style="cursor: pointer;" (click)="clear('password')" />
                 </p-iconfield>
                 <label for="password">Password</label>
             </p-floatlabel>

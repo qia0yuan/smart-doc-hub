@@ -1,4 +1,4 @@
-import { Component, effect, signal } from '@angular/core';
+import { Component, computed, effect, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { Card } from 'primeng/card';
 import { UserService } from './services/user.service';
@@ -17,7 +17,7 @@ import { CommonModule } from '@angular/common';
     providers: [MessageService],
 })
 export class AppComponent {
-    blockedDocument = signal(false);
+    blockedDocument = computed(() => this.userService.showSpinner());
 
     constructor(
         private userService: UserService,
@@ -26,7 +26,6 @@ export class AppComponent {
         effect(() => {
             const toastConfig = this.userService.openToast();
             toastConfig.type && this.showToast(toastConfig);
-            this.userService.showSpinner() && (this.blockedDocument.set(true));
         });
     }
 
@@ -41,7 +40,7 @@ export class AppComponent {
     showToast(config: ToastConfig) {
         this.messageService.add({
             severity: config.type?.toLowerCase(),
-            summary: config.type,
+            summary: config.title || config.type,
             detail: config.message,
         });
     }
