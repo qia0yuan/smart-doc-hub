@@ -6,8 +6,9 @@ import { ToastConfig, User } from '../models/models';
 })
 export class UserService {
   themeColorMode = signal<string>('sun');
-  userDetails = signal<User>({
+  user = signal<User>({
     token: '',
+    accountId: 0,
   });
   confirmDialog = signal<boolean>(false);
   openToast = signal<ToastConfig>({});

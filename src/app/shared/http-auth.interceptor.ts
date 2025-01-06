@@ -3,7 +3,7 @@ import { inject } from '@angular/core';
 import { UserService } from '../services/user.service';
 
 export const httpAuthInterceptor: HttpInterceptorFn = (req, next) => {
-  const token = inject(UserService).userDetails().token;
+  const token = inject(UserService).user().token;
   if (token) {
     const modifiedReq = req.clone({
       setHeaders: {

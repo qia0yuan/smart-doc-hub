@@ -38,7 +38,7 @@ export class HomeComponent implements OnInit {
 
     constructor(
         private userService: UserService,
-        private confirmationService: ConfirmationService
+        private confirmationService: ConfirmationService,
     ) {
         effect(() => {
             this.userService.themeColorMode.set(
@@ -51,15 +51,15 @@ export class HomeComponent implements OnInit {
     ngOnInit() {
         this.items = [
             {
-                label: 'Documents',
-                icon: 'pi pi-file-o',
-                routerLink: '/home/docs',
+                label: 'My Account',
+                icon: 'pi pi-users',
+                routerLink: '/home/users',
                 routerLinkActiveOptions: { exact: true },
             },
             {
-                label: 'Users',
-                icon: 'pi pi-users',
-                routerLink: '/home/users',
+                label: 'Documents',
+                icon: 'pi pi-file-o',
+                routerLink: '/home/docs',
                 routerLinkActiveOptions: { exact: true },
             },
             {

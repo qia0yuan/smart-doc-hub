@@ -2,7 +2,7 @@
     <div class="flex gap-3 justify-content-end mb-3">
         <p-button label="Create" (click)="profileAction('Create')"></p-button>
         <p-button label="Update" (click)="profileAction('Update')"></p-button>
-        <p-button label="Delete" (click)="onDelete()"></p-button>
+        <p-button label="Delete" (click)="onDelete"></p-button>
     </div>
     <div class="card">
         <p-table
@@ -13,10 +13,16 @@
                 <ng-template #header>
                     <tr>
                         <th style="width: 4rem"><p-tableHeaderCheckbox /></th>
-                        <th>User ID</th>
+                        <th>Account ID</th>
                         <th>Name</th>
-                        <th>Group</th>
-                        <th>Date Joined</th>
+                        <th>Address 1</th>
+                        <th>Address 2</th>
+                        <th>Email ID</th>
+                        <th>Telephone</th>
+                        <th>Created By</th>
+                        <th>Updated By</th>
+                        <th>Primary Contact</th>
+                        <th>Secondary Contact</th>
                     </tr>
                 </ng-template>
                 <ng-template #body let-user>
@@ -26,8 +32,14 @@
                         </td>
                         <td>{{user.id}}</td>
                         <td>{{user.name}}</td>
-                        <td>{{user.group}}</td>
-                        <td>{{user.date}}</td>
+                        <td>{{user.address1}}</td>
+                        <td>{{user.address2}}</td>
+                        <td>{{user.emailid}}</td>
+                        <td>{{user.phonenumber}}</td>
+                        <td>{{user.createdby}}</td>
+                        <td>{{user.updatedby}}</td>
+                        <td>{{user.primarycontact}}</td>
+                        <td>{{user.secondarycontact}}</td>
                     </tr>
                 </ng-template>
         </p-table>

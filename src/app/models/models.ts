@@ -3,6 +3,7 @@ export interface User {
     // email: string;
     // phone: string;
     token: string;
+    accountId: number;
 }
 
 export interface ToastConfig {

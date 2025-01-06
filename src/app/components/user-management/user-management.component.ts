@@ -3,10 +3,12 @@ import { ButtonModule } from 'primeng/button';
 import { TableModule } from 'primeng/table';
 import { ProfileComponent } from "./profile/profile.component";
 import { UserService } from '../../services/user.service';
+import { ServiceCallsService } from '../../services/service-calls.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-user-management',
-  imports: [TableModule, ButtonModule, ProfileComponent],
+  imports: [TableModule, ButtonModule, ProfileComponent, CommonModule],
   templateUrl: './user-management.component.html',
   styleUrl: './user-management.component.scss'
 })
@@ -15,32 +17,15 @@ export class UserManagementComponent {
   selectedUsers!: any;
   action = signal<string>('');
 
-  constructor(private userService: UserService) {}
+  constructor(private userService: UserService, private apiService: ServiceCallsService) {}
 
   ngOnInit() {
-      this.users = [
-          {
-              id: '1000',
-              name: 'George',
-              description: 'Account of George.',
-              group: 'Retail',
-              date: '08/01/2021',
-          },
-          {
-              id: '1001',
-              name: 'Venky',
-              description: 'Account of Venky.',
-              group: 'Retail',
-              date: '09/01/2021',
-          },
-          {
-              id: '1002',
-              name: 'Rahul',
-              description: 'Account of Rahul.',
-              group: 'ERMS+',
-              date: '09/01/2021',
-          },
-      ];
+    const accountId = this.userService.user().accountId;
+    this.apiService.getAccountByAccountId(accountId).subscribe((data: any) => {
+      if (data) {
+        this.users = data;
+      }
+    });
   }
 
   profileAction(action: string) {

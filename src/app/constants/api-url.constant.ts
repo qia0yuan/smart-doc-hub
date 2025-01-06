@@ -3,6 +3,7 @@ export const BASE_URL = 'http://3.214.246.121/api/';
 export const ENDPOINTS = {
     USER_CRUD: 'user/{user_id}',
     USER_LOGIN: 'user/token',
+    USER_BY_USERNAME: 'user/',
     ACCOUNT_CRUD: 'account/{account_id}',
     DOCUMENTS_LIST: 'documents/files',
     DOCUMENT_UPLOAD: 'documents/upload',

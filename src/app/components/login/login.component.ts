@@ -16,6 +16,7 @@ import { ProfileComponent } from '../user-management/profile/profile.component';
 import { UserService } from '../../services/user.service';
 import { ServiceCallsService } from '../../services/service-calls.service';
 import { CommonModule } from '@angular/common';
+import { concatMap } from 'rxjs';
 
 @Component({
     selector: 'app-login',
@@ -35,7 +36,7 @@ import { CommonModule } from '@angular/common';
 })
 export class LoginComponent {
     loginForm = new FormGroup({
-        email: new FormControl('', [Validators.required, Validators.email]),
+        username: new FormControl('', Validators.required),
         password: new FormControl('', Validators.required),
     });
     action = signal<string>('');
@@ -52,16 +53,30 @@ export class LoginComponent {
 
     onSubmit() {
         if (this.loginForm.valid) {
-            const email = this.loginForm.get('email')?.value!,
+            const username = this.loginForm.get('username')?.value!,
                 password = this.loginForm.get('password')?.value!;
             this.userService.showSpinner.update(() => true);
-            this.apiService.login(email, password).subscribe(() => ({
-                next: (response: any) => {
+            this.apiService.login(username, password).pipe(
+              concatMap((token: any) => {
+                if (token) {
+                  this.userService.user.update((user) => ({
+                    ...user,
+                    token: token.access_token,
+                  }));
+                  return this.apiService.getUserByUsername(username);
+                } else {
+                  throw new Error('Login failed');
+                }
+              })
+            )
+            .subscribe({
+                next: (data: any) => {
                     this.userService.showSpinner.update(() => false);
-                    if (response && response.acess_token) {
-                        this.userService.userDetails.update(
-                            (user) => (user.token = response.acess_token)
-                        );
+                    if (data) {
+                        this.userService.user.update((user) => ({
+                            ...user,
+                            accountId: data[0].accountid,
+                        }));
                         this.router.navigate(['/home']);
                     }
                 },
@@ -69,11 +84,10 @@ export class LoginComponent {
                     this.userService.showSpinner.update(() => false);
                     this.userService.openToast.update(() => ({
                         type: 'Error',
-                        message: 'Invalid credentials',
+                        message: 'Login failed',
                     }));
                 },
-            }));
-            this.router.navigate(['/home']); // This line is not needed
+            });
         }
     }
 }
