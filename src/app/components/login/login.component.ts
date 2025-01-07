@@ -75,7 +75,7 @@ export class LoginComponent {
                     if (data) {
                         this.userService.user.update((user) => ({
                             ...user,
-                            accountId: data[0].accountid,
+                            currentUser: data[0],
                         }));
                         this.router.navigate(['/home']);
                     }

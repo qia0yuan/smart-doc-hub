@@ -1,9 +1,20 @@
-export interface User {
-    // name: string;
-    // email: string;
-    // phone: string;
+export interface SessionUser {
     token: string;
-    accountId: number;
+    currentUser: User;
+}
+
+export interface User {
+    firstname: string;
+    lastname: string;
+    address2: string;
+    phonenumber: string;
+    userid: string;
+    accountid: number;
+    id: number;
+    address1: string;
+    emailid: string;
+    role: number;
+    password: string;
 }
 
 export interface ToastConfig {

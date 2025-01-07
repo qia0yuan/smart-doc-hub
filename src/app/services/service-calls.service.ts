@@ -18,7 +18,7 @@ export class ServiceCallsService {
         const [key, value] = Object.entries(param)[0];
         new_endpoint = endpoint.replace(`{${key}}`, value as string);
       });
-      return `${baseUrl}/${new_endpoint}`;
+      return `${baseUrl}${new_endpoint}`;
     }
     return `${baseUrl}${endpoint}`;
   }

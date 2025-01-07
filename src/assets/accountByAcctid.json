@@ -1,38 +1,36 @@
-[
-    {
-        "id": 50,
-        "name": "Somy Tech",
-        "address1": "12 Carrington",
-        "address2": null,
-        "emailid": "venky@somytech",
-        "phonenumber": "5714513420",
-        "createdby": 297,
-        "updatedby": 297,
-        "primarycontact": {
-            "lastname": "Irfan",
-            "firstname": "Mohammad",
-            "address2": "Kuwait",
-            "phonenumber": "1234567866",
-            "userid": "irfan524567",
-            "accountid": 50,
-            "address1": "echelonrd",
-            "id": 297,
-            "emailid": "mohamed.bdswork1@gmail.com",
-            "role": 0,
-            "password": "$2b$12$VVw2GaD9eXLW3wJAowPN8.wjfvxuInET6wK6QCsEj4CMe.3Vyqn.u"
-        },
-        "secondarycontact": {
-            "lastname": "vemulokonda",
-            "firstname": "shrenik",
-            "address2": "Suite 10",
-            "phonenumber": "9876543210",
-            "userid": "shrenik617",
-            "accountid": 32,
-            "address1": "rossway",
-            "id": 264,
-            "emailid": "krishsomisetty213@gmail.com",
-            "role": 1,
-            "password": "$2b$12$r9.vHa2wRiYFHZWwzkNp/u53NHVWrUlKWJQ1Htw0BEkYh1W3.Oh3y"
-        }
+{
+    "id": 50,
+    "name": "Somy Tech",
+    "address1": "12 Carrington",
+    "address2": null,
+    "emailid": "venky@somytech",
+    "phonenumber": "5714513420",
+    "createdby": 297,
+    "updatedby": 297,
+    "primarycontact": {
+        "lastname": "Irfan",
+        "firstname": "Mohammad",
+        "address2": "Kuwait",
+        "phonenumber": "1234567866",
+        "userid": "irfan524567",
+        "accountid": 50,
+        "address1": "echelonrd",
+        "id": 297,
+        "emailid": "mohamed.bdswork1@gmail.com",
+        "role": 0,
+        "password": "$2b$12$VVw2GaD9eXLW3wJAowPN8.wjfvxuInET6wK6QCsEj4CMe.3Vyqn.u"
+    },
+    "secondarycontact": {
+        "lastname": "vemulokonda",
+        "firstname": "shrenik",
+        "address2": "Suite 10",
+        "phonenumber": "9876543210",
+        "userid": "shrenik617",
+        "accountid": 32,
+        "address1": "rossway",
+        "id": 264,
+        "emailid": "krishsomisetty213@gmail.com",
+        "role": 1,
+        "password": "$2b$12$r9.vHa2wRiYFHZWwzkNp/u53NHVWrUlKWJQ1Htw0BEkYh1W3.Oh3y"
     }
-]
+}

@@ -1,4 +1,4 @@
-<div class="user-management-container">
+<div class="acct-management-container">
     <div class="flex gap-3 justify-content-end mb-3">
         <p-button label="Create" (click)="profileAction('Create')"></p-button>
         <p-button label="Update" (click)="profileAction('Update')"></p-button>
@@ -6,7 +6,7 @@
     </div>
     <div class="card">
         <p-table
-            [value]="[users()]"
+            [value]="[accounts()]"
             [(selection)]="selectedUsers"
             dataKey="id"
             [tableStyle]="{'min-width': '50rem'}">
@@ -25,21 +25,21 @@
                         <th>Secondary Contact</th>
                     </tr>
                 </ng-template>
-                <ng-template #body let-user>
+                <ng-template #body let-acct>
                     <tr>
                         <td>
-                            <p-tableCheckbox [value]="user" />
+                            <p-tableCheckbox [value]="acct" />
                         </td>
-                        <td>{{user.id}}</td>
-                        <td>{{user.name}}</td>
-                        <td>{{user.address1}}</td>
-                        <td>{{user.address2}}</td>
-                        <td>{{user.emailid}}</td>
-                        <td>{{user.phonenumber}}</td>
-                        <td>{{user.createdby}}</td>
-                        <td>{{user.updatedby}}</td>
-                        <td>{{user.primarycontact.userid}}</td>
-                        <td>{{user.secondarycontact.userid}}</td>
+                        <td>{{acct.id}}</td>
+                        <td>{{acct.name}}</td>
+                        <td>{{acct.address1}}</td>
+                        <td>{{acct.address2}}</td>
+                        <td>{{acct.emailid}}</td>
+                        <td>{{acct.phonenumber}}</td>
+                        <td>{{acct.createdby}}</td>
+                        <td>{{acct.updatedby}}</td>
+                        <td>{{acct.primarycontact.userid}}</td>
+                        <td>{{acct.secondarycontact.userid}}</td>
                     </tr>
                 </ng-template>
         </p-table>

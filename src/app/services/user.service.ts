@@ -1,14 +1,26 @@
 import { Injectable, signal } from '@angular/core';
-import { ToastConfig, User } from '../models/models';
+import { SessionUser, ToastConfig, User } from '../models/models';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
   themeColorMode = signal<string>('sun');
-  user = signal<User>({
+  user = signal<SessionUser>({
     token: '',
-    accountId: 0,
+    currentUser: {
+      firstname: '',
+      lastname: '',
+      address2: '',
+      phonenumber: '',
+      userid: '',
+      accountid: 0,
+      id: 0,
+      address1: '',
+      emailid: '',
+      role: 0,
+      password: ''
+    },
   });
   confirmDialog = signal<boolean>(false);
   openToast = signal<ToastConfig>({});
