@@ -3,6 +3,7 @@ import { BASE_URL, ENDPOINTS } from '../constants/api-url.constant';
 import { Observable } from 'rxjs';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from '../../environments/environment';
+import { User } from '../models/models';
 
 @Injectable({
   providedIn: 'root'
@@ -30,25 +31,31 @@ export class ServiceCallsService {
     body = new FormData();
     body.append('username', username);
     body.append('password', password);
-    return this.http.post<any>(`${this.assetPath}login.json`, body);
-    // return this.http.post<any>(url, body);
+    // return this.http.post<any>(`${this.assetPath}login.json`, body);
+    return this.http.post<any>(url, body);
   }
 
-  getUserByUsername(username: string): Observable<any> {
-    const url = this.getUrl(ENDPOINTS.USER_BY_USERNAME),
+  getUserByUsername(username: string): Observable<User> {
+    const url = this.getUrl(ENDPOINTS.USER_QUERRY),
     params = new HttpParams().append('user_id', username);
-    return this.http.get<any>(`${this.assetPath}userByUsername.json`, {params});
-    // return this.http.get<any>(url, {params});
+    // return this.http.get<User>(`${this.assetPath}userByUsername.json`, {params});
+    return this.http.get<User>(url, {params});
   }
 
-  getUserByUserId(userId: number): Observable<any> {
+  getUserByUserId(userId: number): Observable<User> {
     const url = this.getUrl(ENDPOINTS.USER_CRUD, {user_id: userId});
-    return this.http.get<any>(url);
+    return this.http.get<User>(url);
   }
 
   getAccountByAccountId(accountId: number): Observable<any> {
-    const url = this.getUrl(ENDPOINTS.ACCOUNT_CRUD, {account_id: accountId});
-    return this.http.get<any>(`${this.assetPath}accountByAcctid.json`);
-    // return this.http.get<any>(url);
+    const url = this.getUrl(ENDPOINTS.ACCOUNT_CRUD, {account_id: accountId || 50});
+    // return this.http.get<any>(`${this.assetPath}accountByAcctid.json`);
+    return this.http.get<any>(url);
+  }
+
+  getUserlist(accountId: number, userId: number): Observable<User[]> {
+    const url = this.getUrl(ENDPOINTS.USER_QUERRY, {user_id: userId, accountId: accountId}),
+    params = new HttpParams().append('accountId', accountId || 50).append('user_id', userId);
+    return this.http.get<User[]>(url, {params});
   }
 }

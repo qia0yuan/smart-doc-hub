@@ -13,7 +13,7 @@ export class UserService {
       lastname: '',
       address2: '',
       phonenumber: '',
-      userid: '',
+      userid: 0,
       accountid: 0,
       id: 0,
       address1: '',

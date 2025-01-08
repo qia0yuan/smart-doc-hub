@@ -8,7 +8,7 @@ export interface User {
     lastname: string;
     address2: string;
     phonenumber: string;
-    userid: string;
+    userid: number;
     accountid: number;
     id: number;
     address1: string;

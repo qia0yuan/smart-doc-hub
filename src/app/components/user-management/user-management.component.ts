@@ -6,6 +6,7 @@ import { UserService } from '../../services/user.service';
 import { ServiceCallsService } from '../../services/service-calls.service';
 import { CommonModule } from '@angular/common';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { User } from '../../models/models';
 
 @Component({
   selector: 'app-user-management',
@@ -14,13 +15,14 @@ import { toSignal } from '@angular/core/rxjs-interop';
   styleUrl: './user-management.component.scss'
 })
 export class UserManagementComponent {
-  users!: Signal<any[] | undefined>;
-  selectedUsers!: any;
+  users!: Signal<User[] | undefined>;
+  selectedUsers!: User;
   action = signal<string>('');
 
   constructor(private userService: UserService, private apiService: ServiceCallsService) {
-    const accountId = this.userService.user().currentUser.accountid;
-    this.users = toSignal<any[]>(this.apiService.getAccountByAccountId(accountId));
+    const accountId = this.userService.user().currentUser.accountid,
+    userId = this.userService.user().currentUser.userid;
+    this.users = toSignal<User[]>(this.apiService.getUserlist(accountId, userId));
   }
 
   ngOnInit() {
