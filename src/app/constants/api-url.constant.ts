@@ -1,4 +1,5 @@
-export const BASE_URL = 'http://3.214.246.121/api/';
+export const BASE_URL = 'http://ec2-3-214-246-121.compute-1.amazonaws.com/api/';
+// export const BASE_URL = 'http://3.214.246.121/api/';
 
 export const ENDPOINTS = {
     USER_CRUD: 'user/{user_id}',
