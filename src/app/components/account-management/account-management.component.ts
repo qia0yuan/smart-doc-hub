@@ -19,7 +19,7 @@ export class AccountManagementComponent {
   action = signal<string>('');
 
   constructor(private userService: UserService, private apiService: ServiceCallsService) {
-    const accountId = this.userService.user().currentUser.accountid;
+    const accountId = this.userService.user().currentUser?.accountid;
     this.accounts = toSignal<any[]>(this.apiService.getAccountByAccountId(accountId));
   }
 

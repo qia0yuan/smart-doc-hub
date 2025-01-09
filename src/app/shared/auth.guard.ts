@@ -8,7 +8,7 @@ export const authGuard: CanActivateFn = (route, state) => {
     if (token) {
       return true;
     }
-    return true;
+    return false;
   };
   if (isAuthenticated()) {
     return true;

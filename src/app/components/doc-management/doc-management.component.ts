@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, Signal } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { TableModule } from 'primeng/table';
 import { FileUpload } from 'primeng/fileupload';
@@ -8,6 +8,8 @@ import { Dialog } from 'primeng/dialog';
 import { PrimeNG } from 'primeng/config';
 import { BadgeModule } from 'primeng/badge';
 import { UserService } from '../../services/user.service';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { ServiceCallsService } from '../../services/service-calls.service';
 
 @Component({
     selector: 'app-doc-management',
@@ -24,7 +26,7 @@ import { UserService } from '../../services/user.service';
     styleUrl: './doc-management.component.scss',
 })
 export class DocManagementComponent {
-    products!: any[];
+    documents!: Signal<any[] | undefined>;
     selectedProducts!: any;
     visible = signal<boolean>(false);
     uploadedFiles: any[] = [];
@@ -34,7 +36,15 @@ export class DocManagementComponent {
     constructor(
         private config: PrimeNG,
         private userService: UserService,
-    ) {}
+        private apiService: ServiceCallsService,
+    ) {
+        const userId = this.userService.user().currentUser?.id;
+        this.documents = toSignal<Document[]>(this.apiService.getDocumentsByUserId(userId));
+    }
+    
+    ngOnInit() {
+        this.userService.showSpinner.set(false);
+    }
 
     choose(event: any, callback: () => void) {
         callback();
@@ -105,30 +115,4 @@ export class DocManagementComponent {
         // this.userService.showSpinner.set(true);
     }
 
-    ngOnInit() {
-        this.products = [
-            {
-                id: '1000',
-                name: 'August_statement_2021.pdf',
-                description: 'Bank statement for the month of August 2021.',
-                category: 'Banking',
-                date: '08/01/2021',
-            },
-            {
-                id: '1001',
-                name: 'Sept_statement_2021.pdf',
-                description: 'Bank statement for the month of Sept 2021.',
-                category: 'Banking',
-                date: '09/01/2021',
-            },
-            {
-                id: '1002',
-                name: 'Oct_statement.pdf',
-                description: 'Bank statement for the month of Sept 2021.',
-                category: 'Banking',
-                date: '09/01/2021',
-            },
-        ];
-        this.userService.showSpinner.set(false);
-    }
 }

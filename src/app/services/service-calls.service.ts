@@ -48,14 +48,19 @@ export class ServiceCallsService {
   }
 
   getAccountByAccountId(accountId: number): Observable<any> {
-    const url = this.getUrl(ENDPOINTS.ACCOUNT_CRUD, {account_id: accountId || 50});
+    const url = this.getUrl(ENDPOINTS.ACCOUNT_CRUD, {account_id: accountId});
     // return this.http.get<any>(`${this.assetPath}accountByAcctid.json`);
     return this.http.get<any>(url);
   }
 
-  getUserlist(accountId: number, userId: number): Observable<User[]> {
-    const url = this.getUrl(ENDPOINTS.USER_QUERRY, {user_id: userId, accountId: accountId}),
-    params = new HttpParams().append('accountId', accountId || 50).append('user_id', userId);
-    return this.http.get<User[]>(url, {params});
+  getUserlist(accountId: number): Observable<User[]> {
+    const url = this.getUrl(ENDPOINTS.USERS_LIST, {account_id: accountId});
+    return this.http.get<User[]>(url);
+  }
+
+  getDocumentsByUserId(userId: number): Observable<Document[]> {
+    const url = this.getUrl(ENDPOINTS.DOCUMENT_QUERRY),
+    params = new HttpParams().append('user_id', userId);
+    return this.http.get<Document[]>(url, {params});
   }
 }

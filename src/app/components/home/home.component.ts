@@ -69,7 +69,7 @@ export class HomeComponent implements OnInit {
                 routerLinkActiveOptions: { exact: true },
             },
             {
-                label: this.userService.user().currentUser.firstname,
+                label: this.userService.user().currentUser?.firstname,
                 icon: 'pi pi-user',
                 items: [
                     {

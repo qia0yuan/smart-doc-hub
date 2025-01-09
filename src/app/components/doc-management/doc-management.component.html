@@ -7,28 +7,36 @@
     </div>
     <div class="card">
         <p-table
-            [value]="products"
+            [value]="documents() || []"
             [(selection)]="selectedProducts"
-            dataKey="id"
+            dataKey="document_id"
             [tableStyle]="{'min-width': '50rem'}">
                 <ng-template #header>
                     <tr>
                         <th style="width: 4rem"><p-tableHeaderCheckbox /></th>
+                        <th>Title</th>
+                        <th>Description</th>
+                        <th>Created By</th>
+                        <th>Updated By</th>
+                        <th>Type</th>
+                        <th>Path</th>
+                        <th>Action ID</th>
                         <th>Document ID</th>
-                        <th>Name</th>
-                        <th>Category</th>
-                        <th>Date Modified</th>
                     </tr>
                 </ng-template>
-                <ng-template #body let-product>
+                <ng-template #body let-document>
                     <tr>
                         <td>
-                            <p-tableCheckbox [value]="product" />
+                            <p-tableCheckbox [value]="document" />
                         </td>
-                        <td>{{product.id}}</td>
-                        <td>{{product.name}}</td>
-                        <td>{{product.category}}</td>
-                        <td>{{product.date}}</td>
+                        <td>{{document.title}}</td>
+                        <td>{{document.description}}</td>
+                        <td>{{document.createdby}}</td>
+                        <td>{{document.updatedby}}</td>
+                        <td>{{document.type}}</td>
+                        <td>{{document.path}}</td>
+                        <td>{{document.action_id}}</td>
+                        <td>{{document.document_id}}</td>
                     </tr>
                 </ng-template>
         </p-table>

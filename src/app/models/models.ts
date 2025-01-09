@@ -17,6 +17,17 @@ export interface User {
     password: string;
 }
 
+export interface Document {
+    title: string
+    description: string
+    createdby: number
+    action_id: number
+    path: string
+    document_id: number
+    updatedby: number
+    type: string
+  }
+
 export interface ToastConfig {
     type?: string;
     title?: string;

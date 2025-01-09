@@ -20,9 +20,9 @@ export class UserManagementComponent {
   action = signal<string>('');
 
   constructor(private userService: UserService, private apiService: ServiceCallsService) {
-    const accountId = this.userService.user().currentUser.accountid,
-    userId = this.userService.user().currentUser.userid;
-    this.users = toSignal<User[]>(this.apiService.getUserlist(accountId, userId));
+    const accountId = this.userService.user().currentUser?.accountid,
+    userId = this.userService.user().currentUser?.userid;
+    this.users = toSignal<User[]>(this.apiService.getUserlist(accountId));
   }
 
   ngOnInit() {
