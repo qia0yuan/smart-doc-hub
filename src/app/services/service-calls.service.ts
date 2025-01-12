@@ -3,7 +3,7 @@ import { BASE_URL, ENDPOINTS } from '../constants/api-url.constant';
 import { Observable } from 'rxjs';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from '../../environments/environment';
-import { User } from '../models/models';
+import { Account, User } from '../models/models';
 
 @Injectable({
   providedIn: 'root'
@@ -47,10 +47,10 @@ export class ServiceCallsService {
     return this.http.get<User>(url);
   }
 
-  getAccountByAccountId(accountId: number): Observable<any> {
+  getAccountByAccountId(accountId: number): Observable<Account> {
     const url = this.getUrl(ENDPOINTS.ACCOUNT_CRUD, {account_id: accountId});
-    // return this.http.get<any>(`${this.assetPath}accountByAcctid.json`);
-    return this.http.get<any>(url);
+    // return this.http.get<Account>(`${this.assetPath}accountByAcctid.json`);
+    return this.http.get<Account>(url);
   }
 
   getUserlist(accountId: number): Observable<User[]> {
@@ -63,4 +63,23 @@ export class ServiceCallsService {
     params = new HttpParams().append('user_id', userId);
     return this.http.get<Document[]>(url, {params});
   }
+
+  uploadDocument(formData: FormData): Observable<any> {
+    const url = this.getUrl(ENDPOINTS.DOCUMENT_UPLOAD);
+    return this.http.post<any>(url, formData);
+  }
+
+  downloadDocument(name: string): Observable<any> {
+    const url = this.getUrl(ENDPOINTS.DOCUMENT_DOWNLOAD),
+    params = new HttpParams().append('filename', name),
+    options = {params, responseType: 'blob' as 'json', observe: 'response' as 'body'};
+    return this.http.get<any>(url, options);
+  }
+
+  deleteDocument(name: string): Observable<any> {
+    const url = this.getUrl(ENDPOINTS.DOCUMENT_DELETE),
+    params = new HttpParams().append('filename', name);
+    return this.http.delete<any>(url, {params});
+  }
+
 }

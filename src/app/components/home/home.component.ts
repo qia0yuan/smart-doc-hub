@@ -6,11 +6,14 @@ import { Dialog } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
+import { ToggleButtonModule } from 'primeng/togglebutton';
 import { ProfileComponent } from '../user-management/profile/profile.component';
 import { FormsModule } from '@angular/forms';
 import { UserService } from '../../services/user.service';
 import { ConfirmDialog } from 'primeng/confirmdialog';
 import { ToastModule } from 'primeng/toast';
+import { CommonModule } from '@angular/common';
+import { CheckboxModule } from 'primeng/checkbox';
 
 @Component({
     selector: 'app-home',
@@ -22,9 +25,12 @@ import { ToastModule } from 'primeng/toast';
         ButtonModule,
         InputTextModule,
         ToggleSwitchModule,
+        ToggleButtonModule,
         FormsModule,
         ConfirmDialog,
         ToastModule,
+        CommonModule,
+        CheckboxModule,
     ],
     templateUrl: './home.component.html',
     styleUrl: './home.component.scss',
@@ -35,16 +41,15 @@ export class HomeComponent implements OnInit {
     action = signal<string>('');
     visible = signal<boolean>(false);
     checked = signal<boolean>(true);
+    notification = signal<string[]>([]);
 
     constructor(
         private userService: UserService,
-        private confirmationService: ConfirmationService,
     ) {
         effect(() => {
             this.userService.themeColorMode.set(
                 this.checked() ? 'sun' : 'moon'
             );
-            this.userService.confirmDialog() && this.confirm();
         });
     }
 
@@ -107,24 +112,4 @@ export class HomeComponent implements OnInit {
         this.visible.set(false);
     }
 
-    confirm() {
-        this.confirmationService.confirm({
-            header: 'Are you sure?',
-            message: 'Please confirm to proceed.',
-            accept: () => {
-                this.userService.openToast.update(() => ({
-                    type: 'info',
-                    message: 'You have accepted',
-                }));
-                this.userService.confirmDialog.set(false);
-            },
-            reject: () => {
-                this.userService.openToast.update(() => ({
-                    type: 'info',
-                    message: 'You have rejected',
-                }));
-                this.userService.confirmDialog.set(false);
-            },
-        });
-    }
 }

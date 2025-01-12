@@ -2,39 +2,85 @@
     <p-menubar [model]="items" />
 </div>
 <app-profile [action]="action()" (closed)="action.set('')"></app-profile>
-<p-dialog header="Settings" [modal]="true" [(visible)]="visible" [style]="{ width: '25rem' }">
+<p-dialog
+    header="Settings"
+    [modal]="true"
+    [(visible)]="visible"
+    [style]="{ width: '25rem' }"
+>
     <span class="p-text-secondary block mb-4">Modify your settings.</span>
-    <!-- <div class="flex items-center gap-4 mb-4">
-        <label for="username" class="font-semibold w-24">Username</label>
-        <input pInputText id="username" class="flex-auto" autocomplete="off" />
-    </div> -->
+    <div class="flex items-center gap-4 mb-4">
+        <label class="font-semibold w-24">Notifications</label>
+        <div class="flex justify-center items-center gap-4 w-full leading-none">
+            <div class="flex items-center">
+                <p-checkbox
+                    inputId="email"
+                    name="notification"
+                    value="email"
+                    [(ngModel)]="notification"
+                />
+                <label for="email" class="ml-2"> Email </label>
+            </div>
+            <div class="flex items-center">
+                <p-checkbox
+                    inputId="sms"
+                    name="notification"
+                    value="sms"
+                    [(ngModel)]="notification"
+                />
+                <label for="sms" class="ml-2"> SMS </label>
+            </div>
+        </div>
+    </div>
     <div class="flex items-center gap-4 mb-8">
         <label for="themebg" class="font-semibold w-24">Theme Background</label>
-        <div class="flex justify-center gap-4 w-full">
+        <div class="flex justify-center gap-4 w-full leading-none">
             <i class="pi pi-moon"></i>
             <p-toggleswitch [(ngModel)]="checked" />
             <i class="pi pi-sun"></i>
         </div>
     </div>
     <div class="flex justify-end gap-2">
-        <p-button label="Cancel" severity="secondary" (click)="onBtnClick('cancel')" />
+        <p-button
+            label="Cancel"
+            severity="secondary"
+            (click)="onBtnClick('cancel')"
+        />
         <p-button label="Save" (click)="onBtnClick('save')" />
     </div>
 </p-dialog>
 <div class="flex justify-center">
     <p-confirmdialog #cd>
-        <ng-template #headless let-message let-onAccept="onAccept" let-onReject="onReject">
-            <div class="flex flex-col items-center w-full p-8 border-surface-200 rounded">
+        <ng-template
+            #headless
+            let-message
+            let-onAccept="onAccept"
+            let-onReject="onReject"
+        >
+            <div
+                class="flex flex-col items-center w-full p-8 border-surface-200 rounded"
+            >
                 <div
                     class="rounded-full bg-primary text-primary-contrast inline-flex justify-center items-center h-24 w-24 -mt-20"
                 >
                     <i class="pi pi-question !text-5xl"></i>
                 </div>
-                <span class="font-bold text-2xl block mb-2 mt-6">{{ message.header }}</span>
+                <span class="font-bold text-2xl block mb-2 mt-6">{{
+                    message.header
+                }}</span>
                 <p class="mb-0">{{ message.message }}</p>
                 <div class="flex items-center gap-2 mt-6">
-                    <p-button label="Save" (onClick)="onAccept()" styleClass="w-32"></p-button>
-                    <p-button label="Cancel" [outlined]="true" (onClick)="onReject()" styleClass="w-32"></p-button>
+                    <p-button
+                        label="Yes"
+                        (onClick)="onAccept()"
+                        styleClass="w-32"
+                    ></p-button>
+                    <p-button
+                        label="Cancel"
+                        [outlined]="true"
+                        (onClick)="onReject()"
+                        styleClass="w-32"
+                    ></p-button>
                 </div>
             </div>
         </ng-template>

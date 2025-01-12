@@ -33,6 +33,5 @@ export class UserManagementComponent {
   }
 
   onDelete() {
-      this.userService.confirmDialog.set(true);
   }
 }

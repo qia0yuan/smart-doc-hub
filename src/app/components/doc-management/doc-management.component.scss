@@ -1,3 +1,12 @@
 .doc-management-container {
     margin: 20px;
 }
+
+.file-list {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    align-items: center;
+    p-button, & > span:nth-child(2) {
+        justify-self: end;
+    }
+}

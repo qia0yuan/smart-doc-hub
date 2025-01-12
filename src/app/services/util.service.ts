@@ -7,7 +7,7 @@ export class UtilService {
 
   constructor() { }
 
-  saveDownloadedFile(resp: any, filename: string) {
+  saveDownloadedFile(resp: any, filename?: string) {
     const blob = new Blob([resp.body]);
     if (!filename) {
       const headers = resp.headers,

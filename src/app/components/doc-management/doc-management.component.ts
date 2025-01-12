@@ -10,6 +10,10 @@ import { BadgeModule } from 'primeng/badge';
 import { UserService } from '../../services/user.service';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ServiceCallsService } from '../../services/service-calls.service';
+import { HttpResponse } from '@angular/common/http';
+import { UtilService } from '../../services/util.service';
+import { ConfirmationService } from 'primeng/api';
+import { BehaviorSubject, switchMap } from 'rxjs';
 
 @Component({
     selector: 'app-doc-management',
@@ -27,19 +31,24 @@ import { ServiceCallsService } from '../../services/service-calls.service';
 })
 export class DocManagementComponent {
     documents!: Signal<any[] | undefined>;
-    selectedProducts!: any;
+    selectedProducts = signal<any>(null);
     visible = signal<boolean>(false);
     uploadedFiles: any[] = [];
     totalSize: number = 0;
     totalSizePercent: number = 0;
+    refreshTable$ = new BehaviorSubject<void>(undefined);
 
     constructor(
         private config: PrimeNG,
         private userService: UserService,
         private apiService: ServiceCallsService,
+        private utilService: UtilService,
+        private confirmationService: ConfirmationService,
     ) {
         const userId = this.userService.user().currentUser?.id;
-        this.documents = toSignal<Document[]>(this.apiService.getDocumentsByUserId(userId));
+        this.documents = toSignal<Document[]>(this.refreshTable$.pipe(
+            switchMap(() => this.apiService.getDocumentsByUserId(userId))
+        ))
     }
     
     ngOnInit() {
@@ -50,19 +59,29 @@ export class DocManagementComponent {
         callback();
     }
 
-    uploadEvent(callback: () => void) {
-        callback();
+    uploadEvent(ulCallback: () => void, clearCallback: () => void) {
+        const formData = new FormData();
+        for (let file of this.uploadedFiles) {
+            formData.append('file', file);
+            this.totalSize += parseInt(this.formatSize(file.size));
+        }
+        this.apiService.uploadDocument(formData).subscribe((response) => {
+            console.log(response);
+            ulCallback();
+            this.onTemplatedUpload();
+            clearCallback();
+            this.visible.set(false);
+        });
     }
 
     onSelectedFiles(event: any) {
         for (let file of event.files) {
             this.uploadedFiles.push(file);
         }
+    }
 
-        this.userService.openToast.update(() => ({
-            type: 'info',
-            message: '',
-        }));
+    clearAll() {
+        this.uploadedFiles = [];
     }
 
     formatSize(bytes: number) {
@@ -101,18 +120,46 @@ export class DocManagementComponent {
             type: 'info',
             message: 'File Uploaded',
         }));
+        this.refreshTable$.next();
     }
 
-    onDownload() {
-        this.userService.confirmDialog.set(true);
+    onDownload(rows: any) {
+        console.log(rows);
+        this.apiService.downloadDocument(rows[0].title).subscribe((response: HttpResponse<any>) => {
+            console.log(response);
+            if (response && response.ok) {
+                this.utilService.saveDownloadedFile(response, rows[0].title);
+            }
+        });
+        // this.userService.confirmDialog.set(true);
     }
 
-    onDelete() {
-        this.userService.confirmDialog.set(true);
+    onDelete(rows: any) {
+        const callback = () => {
+            this.apiService.deleteDocument(rows[0].title).subscribe(resp => {
+                console.log(resp);
+                this.refreshTable$.next();
+            });
+        };
+        this.confirm(callback);
     }
 
     onShare() {
         // this.userService.showSpinner.set(true);
+    }
+
+    confirm(cb: () => void) {
+        this.confirmationService.confirm({
+            header: 'Are you sure?',
+            message: 'Please confirm to proceed.',
+            accept: cb,
+            reject: () => {
+                // this.userService.openToast.update(() => ({
+                //     type: 'info',
+                //     message: 'You have rejected',
+                // }));
+            },
+        });
     }
 
 }

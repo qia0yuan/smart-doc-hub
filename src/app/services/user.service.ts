@@ -22,7 +22,6 @@ export class UserService {
       password: ''
     },
   });
-  confirmDialog = signal<boolean>(false);
   openToast = signal<ToastConfig>({});
   showSpinner = signal<boolean>(false);
 

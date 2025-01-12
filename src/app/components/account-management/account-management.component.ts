@@ -6,6 +6,7 @@ import { UserService } from '../../services/user.service';
 import { ServiceCallsService } from '../../services/service-calls.service';
 import { CommonModule } from '@angular/common';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { Account } from '../../models/models';
 
 @Component({
   selector: 'app-account-management',
@@ -14,13 +15,13 @@ import { toSignal } from '@angular/core/rxjs-interop';
   styleUrl: './account-management.component.scss'
 })
 export class AccountManagementComponent {
-  accounts!: Signal<any[] | undefined>;
+  accounts!: Signal<Account | undefined>;
   selectedUsers!: any;
   action = signal<string>('');
 
   constructor(private userService: UserService, private apiService: ServiceCallsService) {
     const accountId = this.userService.user().currentUser?.accountid;
-    this.accounts = toSignal<any[]>(this.apiService.getAccountByAccountId(accountId));
+    this.accounts = toSignal<Account>(this.apiService.getAccountByAccountId(accountId));
   }
 
   ngOnInit() {
@@ -31,6 +32,5 @@ export class AccountManagementComponent {
   }
 
   onDelete() {
-      this.userService.confirmDialog.set(true);
   }
 }

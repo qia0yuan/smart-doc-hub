@@ -17,16 +17,29 @@ export interface User {
     password: string;
 }
 
+export interface Account {
+    id: number;
+    name: string;
+    address1: string;
+    address2: any;
+    emailid: string;
+    phonenumber: string;
+    createdby: number;
+    updatedby: number;
+    primarycontact: User;
+    secondarycontact: User;
+}
+
 export interface Document {
-    title: string
-    description: string
-    createdby: number
-    action_id: number
-    path: string
-    document_id: number
-    updatedby: number
-    type: string
-  }
+    title: string;
+    description: string;
+    createdby: number;
+    action_id: number;
+    path: string;
+    document_id: number;
+    updatedby: number;
+    type: string;
+}
 
 export interface ToastConfig {
     type?: string;

@@ -21,3 +21,18 @@
     content: " *";
     color: red;
 }
+
+p-table {
+    & > div {
+        height: calc(100vh - 57.6px - 45.6px - 100px);
+        overflow: auto;
+        & > div {
+            overflow: unset !important;
+        }
+        thead {
+            position: sticky;
+            top: 0;
+            z-index: 4;
+        }
+    }
+}
