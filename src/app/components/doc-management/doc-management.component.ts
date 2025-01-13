@@ -13,7 +13,8 @@ import { ServiceCallsService } from '../../services/service-calls.service';
 import { HttpResponse } from '@angular/common/http';
 import { UtilService } from '../../services/util.service';
 import { ConfirmationService } from 'primeng/api';
-import { BehaviorSubject, switchMap } from 'rxjs';
+import { BehaviorSubject, catchError, forkJoin, switchMap, throwError } from 'rxjs';
+import { Document } from '../../models/models';
 
 @Component({
     selector: 'app-doc-management',
@@ -30,8 +31,8 @@ import { BehaviorSubject, switchMap } from 'rxjs';
     styleUrl: './doc-management.component.scss',
 })
 export class DocManagementComponent {
-    documents!: Signal<any[] | undefined>;
-    selectedProducts = signal<any>(null);
+    documents!: Signal<Document[] | undefined>;
+    selectedDocuments = signal<Document[]>([]);
     visible = signal<boolean>(false);
     uploadedFiles: any[] = [];
     totalSize: number = 0;
@@ -46,7 +47,7 @@ export class DocManagementComponent {
         private confirmationService: ConfirmationService,
     ) {
         const userId = this.userService.user().currentUser?.id;
-        this.documents = toSignal<Document[]>(this.refreshTable$.pipe(
+        this.documents = toSignal<any[]>(this.refreshTable$.pipe(
             switchMap(() => this.apiService.getDocumentsByUserId(userId))
         ))
     }
@@ -117,26 +118,50 @@ export class DocManagementComponent {
 
     onTemplatedUpload() {
         this.userService.openToast.update(() => ({
-            type: 'info',
-            message: 'File Uploaded',
+            type: 'success',
+            message: 'File(s) Uploaded',
         }));
         this.refreshTable$.next();
     }
 
-    onDownload(rows: any) {
+    onDownload(rows: Document[]) {
         console.log(rows);
-        this.apiService.downloadDocument(rows[0].title).subscribe((response: HttpResponse<any>) => {
-            console.log(response);
-            if (response && response.ok) {
-                this.utilService.saveDownloadedFile(response, rows[0].title);
-            }
-        });
-        // this.userService.confirmDialog.set(true);
+        if (!rows.length) {
+            this.userService.openToast.update(() => ({
+                type: 'warn',
+                message: 'Please select file(s)',
+            }));
+        } else {
+            const selectedDocs = rows.map(row => this.apiService.downloadDocument(row.document_id));
+            forkJoin(selectedDocs).pipe(
+                catchError(err => throwError(() => err))
+            ).subscribe({
+                next: (resp: HttpResponse<Blob>[]) => {
+                    console.log(resp);
+                    resp.forEach((response, i) => {
+                        if (response && response.ok) {
+                            this.utilService.saveDownloadedFile(response, rows[i].title);
+                        }
+                    });
+                    this.userService.openToast.update(() => ({
+                        type: 'success',
+                        message: 'File(s) Downloaded',
+                    }));
+                    this.selectedDocuments.set([]);
+                },
+                error: err => {
+                    this.userService.openToast.update(() => ({
+                        type: 'danger',
+                        message: 'File(s) Downloaded failed',
+                    }));
+                }
+            });
+        }
     }
 
     onDelete(rows: any) {
         const callback = () => {
-            this.apiService.deleteDocument(rows[0].title).subscribe(resp => {
+            this.apiService.deleteDocument(rows[0].document_id).subscribe(resp => {
                 console.log(resp);
                 this.refreshTable$.next();
             });

@@ -69,17 +69,15 @@ export class ServiceCallsService {
     return this.http.post<any>(url, formData);
   }
 
-  downloadDocument(name: string): Observable<any> {
-    const url = this.getUrl(ENDPOINTS.DOCUMENT_DOWNLOAD),
-    params = new HttpParams().append('filename', name),
-    options = {params, responseType: 'blob' as 'json', observe: 'response' as 'body'};
+  downloadDocument(id: number): Observable<any> {
+    const url = this.getUrl(ENDPOINTS.DOCUMENT_DOWNLOAD, {doc_id: id}),
+    options = {responseType: 'blob' as 'json', observe: 'response' as 'body'};
     return this.http.get<any>(url, options);
   }
 
-  deleteDocument(name: string): Observable<any> {
-    const url = this.getUrl(ENDPOINTS.DOCUMENT_DELETE),
-    params = new HttpParams().append('filename', name);
-    return this.http.delete<any>(url, {params});
+  deleteDocument(id: number): Observable<any> {
+    const url = this.getUrl(ENDPOINTS.DOCUMENT_DELETE, {doc_id: id});
+    return this.http.delete<any>(url);
   }
 
 }

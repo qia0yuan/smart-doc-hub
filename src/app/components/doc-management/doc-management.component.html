@@ -1,14 +1,14 @@
 <div class="doc-management-container">
     <div class="flex gap-3 justify-content-end mb-3">
         <p-button label="Upload" (click)="visible.set(true)"></p-button>
-        <p-button label="Download" (click)="onDownload(selectedProducts())"></p-button>
+        <p-button label="Download" (click)="onDownload(selectedDocuments())"></p-button>
         <p-button label="Share" (click)="onShare()"></p-button>
-        <p-button label="Delete" (click)="onDelete(selectedProducts())"></p-button>
+        <p-button label="Delete" (click)="onDelete(selectedDocuments())"></p-button>
     </div>
     <div class="card">
         <p-table
             [value]="documents() || []"
-            [(selection)]="selectedProducts"
+            [(selection)]="selectedDocuments"
             dataKey="document_id"
             [tableStyle]="{'min-width': '50rem'}">
                 <ng-template #header>
@@ -44,7 +44,7 @@
 </div>
 <p-dialog header="File Upload" [modal]="true" [(visible)]="visible" [style]="{ width: '40rem' }">
     <div class="card">
-        <p-fileupload (onUpload)="onTemplatedUpload()" (onSelect)="onSelectedFiles($event)" (onClear)="clearAll()" [multiple]="true" accept="image/*" chooseLabel="Choose" cancelLabel="Cancel" uploadLabel="Upload"> 
+        <p-fileupload (onUpload)="onTemplatedUpload()" (onSelect)="onSelectedFiles($event)" (onClear)="clearAll()" [multiple]="true" chooseLabel="Choose" cancelLabel="Cancel" uploadLabel="Upload"> 
             <ng-template #header let-files let-chooseCallback="chooseCallback" let-clearCallback="clearCallback" let-uploadCallback="uploadCallback">
                 <div class="flex flex-wrap justify-between items-center flex-1 gap-4">
                     <div class="flex gap-2">
