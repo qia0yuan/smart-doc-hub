@@ -42,7 +42,7 @@ export interface Document {
 }
 
 export interface ToastConfig {
-    type?: string; //success, danger, info, warn
+    type?: string; //success, error, info, warn
     title?: string;
     message?: string;
 }

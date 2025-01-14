@@ -1,4 +1,4 @@
-import { Component, signal, Signal } from '@angular/core';
+import { Component, effect, signal, Signal } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { TableModule } from 'primeng/table';
 import { FileUpload } from 'primeng/fileupload';
@@ -13,7 +13,14 @@ import { ServiceCallsService } from '../../services/service-calls.service';
 import { HttpResponse } from '@angular/common/http';
 import { UtilService } from '../../services/util.service';
 import { ConfirmationService } from 'primeng/api';
-import { BehaviorSubject, catchError, forkJoin, switchMap, throwError } from 'rxjs';
+import {
+    BehaviorSubject,
+    catchError,
+    forkJoin,
+    switchMap,
+    tap,
+    throwError,
+} from 'rxjs';
 import { Document } from '../../models/models';
 
 @Component({
@@ -44,17 +51,23 @@ export class DocManagementComponent {
         private userService: UserService,
         private apiService: ServiceCallsService,
         private utilService: UtilService,
-        private confirmationService: ConfirmationService,
+        private confirmationService: ConfirmationService
     ) {
         const userId = this.userService.user().currentUser?.id;
-        this.documents = toSignal<any[]>(this.refreshTable$.pipe(
-            switchMap(() => this.apiService.getDocumentsByUserId(userId))
-        ))
+        this.documents = toSignal<any[]>(
+            this.refreshTable$.pipe(
+                tap(() => this.userService.showSpinner.set(true)),
+                switchMap(() => this.apiService.getDocumentsByUserId(userId))
+            )
+        );
+        effect(() => {
+            if (this.documents()) {
+                this.userService.showSpinner.set(false);
+            }
+        });
     }
-    
-    ngOnInit() {
-        this.userService.showSpinner.set(false);
-    }
+
+    ngOnInit() {}
 
     choose(event: any, callback: () => void) {
         callback();
@@ -66,6 +79,7 @@ export class DocManagementComponent {
             formData.append('file', file);
             this.totalSize += parseInt(this.formatSize(file.size));
         }
+        this.userService.showSpinner.set(true);
         this.apiService.uploadDocument(formData).subscribe((response) => {
             console.log(response);
             ulCallback();
@@ -118,7 +132,7 @@ export class DocManagementComponent {
 
     onTemplatedUpload() {
         this.userService.openToast.update(() => ({
-            type: 'success',
+            type: 'Success',
             message: 'File(s) Uploaded',
         }));
         this.refreshTable$.next();
@@ -128,45 +142,73 @@ export class DocManagementComponent {
         console.log(rows);
         if (!rows.length) {
             this.userService.openToast.update(() => ({
-                type: 'warn',
+                type: 'Warn',
                 message: 'Please select file(s)',
             }));
         } else {
-            const selectedDocs = rows.map(row => this.apiService.downloadDocument(row.document_id));
-            forkJoin(selectedDocs).pipe(
-                catchError(err => throwError(() => err))
-            ).subscribe({
-                next: (resp: HttpResponse<Blob>[]) => {
-                    console.log(resp);
-                    resp.forEach((response, i) => {
-                        if (response && response.ok) {
-                            this.utilService.saveDownloadedFile(response, rows[i].title);
-                        }
-                    });
-                    this.userService.openToast.update(() => ({
-                        type: 'success',
-                        message: 'File(s) Downloaded',
-                    }));
-                    this.selectedDocuments.set([]);
-                },
-                error: err => {
-                    this.userService.openToast.update(() => ({
-                        type: 'danger',
-                        message: 'File(s) Downloaded failed',
-                    }));
-                }
-            });
+            const selectedDocs = rows.map((row) =>
+                this.apiService.downloadDocument(row.document_id)
+            );
+            this.userService.showSpinner.set(true);
+            forkJoin(selectedDocs)
+                .pipe(catchError((err) => throwError(() => err)))
+                .subscribe({
+                    next: (resp: HttpResponse<Blob>[]) => {
+                        this.userService.showSpinner.set(false);
+                        resp.forEach((response, i) => {
+                            if (response && response.ok) {
+                                this.utilService.saveDownloadedFile(
+                                    response,
+                                    rows[i].title
+                                );
+                            }
+                        });
+                        this.userService.openToast.update(() => ({
+                            type: 'Success',
+                            message: 'File(s) Downloaded',
+                        }));
+                        this.selectedDocuments.set([]);
+                    },
+                    error: (err) => {
+                        this.userService.showSpinner.set(false);
+                        this.userService.openToast.update(() => ({
+                            type: 'danger',
+                            title: 'Error',
+                            message: 'File(s) Downloaded failed',
+                        }));
+                    },
+                });
         }
     }
 
     onDelete(rows: any) {
         const callback = () => {
-            this.apiService.deleteDocument(rows[0].document_id).subscribe(resp => {
-                console.log(resp);
-                this.refreshTable$.next();
+            this.userService.showSpinner.set(true);
+            this.apiService.deleteDocument(rows[0].document_id).subscribe({
+                next: (resp) => {
+                    this.userService.openToast.update(() => ({
+                        type: 'Success',
+                        message: 'File(s) Deleted',
+                    }));
+                    this.refreshTable$.next();
+                },
+                error: (err) => {
+                    this.userService.showSpinner.set(false);
+                    this.userService.openToast.update(() => ({
+                        type: 'Error',
+                        message: 'Deletion failed',
+                    }));
+                },
             });
         };
-        this.confirm(callback);
+        if (!rows.length) {
+            this.userService.openToast.update(() => ({
+                type: 'Warn',
+                message: 'Please select file(s)',
+            }));
+        } else {
+            this.confirm(callback);
+        }
     }
 
     onShare() {
@@ -186,5 +228,4 @@ export class DocManagementComponent {
             },
         });
     }
-
 }
