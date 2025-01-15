@@ -1,9 +1,9 @@
 <div class="doc-management-container">
     <div class="flex gap-3 justify-content-end mb-3">
-        <p-button label="Upload" (click)="visible.set(true)"></p-button>
-        <p-button label="Download" (click)="onDownload(selectedDocuments())"></p-button>
-        <p-button label="Share" (click)="onShare()"></p-button>
-        <p-button label="Delete" (click)="onDelete(selectedDocuments())"></p-button>
+        <p-button label="Upload" [disabled]="!documents()" (click)="visible.set(true)"></p-button>
+        <p-button label="Download" [disabled]="!documents()" (click)="onDownload(selectedDocuments())"></p-button>
+        <p-button label="Share" [disabled]="!documents()" (click)="onShare()"></p-button>
+        <p-button label="Delete" [disabled]="!documents()" (click)="onDelete(selectedDocuments())"></p-button>
     </div>
     <div class="card">
         <p-table
@@ -38,6 +38,9 @@
                         <td>{{document.action_id}}</td>
                         <td>{{document.document_id}}</td>
                     </tr>
+                </ng-template>
+                <ng-template #emptymessage let-columns>
+                    <div class="no-data">No Data Found</div>
                 </ng-template>
         </p-table>
     </div>

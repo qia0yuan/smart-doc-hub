@@ -42,6 +42,9 @@
                         <td>{{user.role}}</td>
                     </tr>
                 </ng-template>
+                <ng-template #emptymessage let-columns>
+                    <div class="no-data">No Data Found</div>
+                </ng-template>
         </p-table>
     </div>
 </div>

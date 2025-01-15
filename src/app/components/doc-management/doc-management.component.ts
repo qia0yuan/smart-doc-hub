@@ -17,6 +17,7 @@ import {
     BehaviorSubject,
     catchError,
     forkJoin,
+    of,
     switchMap,
     tap,
     throwError,
@@ -57,7 +58,16 @@ export class DocManagementComponent {
         this.documents = toSignal<any[]>(
             this.refreshTable$.pipe(
                 tap(() => this.userService.showSpinner.set(true)),
-                switchMap(() => this.apiService.getDocumentsByUserId(userId))
+                switchMap(() => this.apiService.getDocumentsByUserId(userId).pipe(
+                    catchError((err) => {
+                        this.userService.showSpinner.set(false);
+                        this.userService.openToast.update(() => ({
+                            type: 'Error',
+                            message: 'Service call failed',
+                        }));
+                        return of([]);
+                    })
+                ))
             )
         );
         effect(() => {
