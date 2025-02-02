@@ -104,7 +104,7 @@ export class InviteeManagementComponent {
                     userid: user.id,
                     userFirstName: user.firstname,
                     userLastName: user.lastname,
-                    token: '',
+                    token: this.userService.user().token,
                     status: '',
                     shareddocuments: null,
                 })),

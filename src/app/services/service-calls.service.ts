@@ -46,7 +46,7 @@ export class ServiceCallsService {
   }
 
   sendInvitation(inviteObj: any) {
-    const url = this.getUrl(ENDPOINTS.INVITEE);
+    const url = this.getUrl(ENDPOINTS.SEND_INVITATION, {user_id: inviteObj.id});
     return this.http.post(url, inviteObj);
   }
 
