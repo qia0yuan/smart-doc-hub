@@ -68,6 +68,12 @@ export class HomeComponent implements OnInit {
                 routerLinkActiveOptions: { exact: true },
             },
             {
+                label: 'Invitees',
+                icon: 'pi pi-users',
+                routerLink: '/home/invitees',
+                routerLinkActiveOptions: { exact: true },
+            },
+            {
                 label: 'Documents',
                 icon: 'pi pi-file-o',
                 routerLink: '/home/docs',

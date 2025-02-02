@@ -1,4 +1,4 @@
-import { Component, computed, effect, signal } from '@angular/core';
+import { Component, computed, effect, signal, untracked } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { Card } from 'primeng/card';
 import { UserService } from './services/user.service';
@@ -25,7 +25,7 @@ export class AppComponent {
     ) {
         effect(() => {
             const toastConfig = this.userService.openToast();
-            toastConfig.type && this.showToast(toastConfig);
+            untracked(() => toastConfig.type && this.showToast(toastConfig));
         });
     }
 

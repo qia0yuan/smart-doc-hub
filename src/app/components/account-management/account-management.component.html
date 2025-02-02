@@ -6,7 +6,7 @@
     </div>
     <div class="card">
         <p-table
-            [value]="[accounts()]"
+            [value]="accounts() || []"
             [(selection)]="selectedUsers"
             dataKey="id"
             [tableStyle]="{'min-width': '50rem'}">

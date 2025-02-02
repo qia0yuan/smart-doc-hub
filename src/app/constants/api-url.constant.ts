@@ -4,8 +4,11 @@ export const BASE_URL = 'http://ec2-3-214-246-121.compute-1.amazonaws.com/api/';
 export const ENDPOINTS = {
     USER_CRUD: 'user/{user_id}',
     USER_LOGIN: 'user/token',
-    USER_QUERRY: 'user/',
+    USER: 'user/',
     USERS_LIST: 'account/{account_id}/user',
+    INVITEE: 'invitee/',
+    INVITEES_LIST: 'account/{account_id}/invitee',
+    SEND_INVITATION: 'user/{user_id}/invite', 
     ACCOUNT_CRUD: 'account/{account_id}',
     DOCUMENT_QUERRY: 'documents/',
     DOCUMENTS_LIST: 'documents/files',

@@ -35,8 +35,23 @@ export class ServiceCallsService {
     return this.http.post<any>(url, body);
   }
 
+  createUser(user: User): Observable<User> {
+    const url = this.getUrl(ENDPOINTS.USER);
+    return this.http.post<User>(url, user);
+  }
+
+  createInvitee(invitee: User): Observable<User> {
+    const url = this.getUrl(ENDPOINTS.INVITEE);
+    return this.http.post<User>(url, invitee);
+  }
+
+  sendInvitation(inviteObj: any) {
+    const url = this.getUrl(ENDPOINTS.INVITEE);
+    return this.http.post(url, inviteObj);
+  }
+
   getUserByUsername(username: string): Observable<User> {
-    const url = this.getUrl(ENDPOINTS.USER_QUERRY),
+    const url = this.getUrl(ENDPOINTS.USER),
     params = new HttpParams().append('user_id', username);
     // return this.http.get<User>(`${this.assetPath}userByUsername.json`, {params});
     return this.http.get<User>(url, {params});
@@ -55,6 +70,11 @@ export class ServiceCallsService {
 
   getUserlist(accountId: number): Observable<User[]> {
     const url = this.getUrl(ENDPOINTS.USERS_LIST, {account_id: accountId});
+    return this.http.get<User[]>(url);
+  }
+
+  getInviteelist(accountId: number): Observable<User[]> {
+    const url = this.getUrl(ENDPOINTS.INVITEES_LIST, {account_id: accountId});
     return this.http.get<User[]>(url);
   }
 

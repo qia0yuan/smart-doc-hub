@@ -35,6 +35,10 @@ export const routes: Routes = [
                 path: 'account',
                 loadComponent: () => import('./components/account-management/account-management.component').then(m => m.AccountManagementComponent),
             },
+            {
+                path: 'invitees',
+                loadComponent: () => import('./components/invitee-management/invitee-management.component').then(m => m.InviteeManagementComponent),
+            },
         ]
     },
     {

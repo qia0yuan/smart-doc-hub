@@ -1,4 +1,4 @@
-import { Component, effect, signal, Signal } from '@angular/core';
+import { Component, effect, signal, Signal, untracked } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { TableModule } from 'primeng/table';
 import { FileUpload } from 'primeng/fileupload';
@@ -8,7 +8,7 @@ import { Dialog } from 'primeng/dialog';
 import { PrimeNG } from 'primeng/config';
 import { BadgeModule } from 'primeng/badge';
 import { UserService } from '../../services/user.service';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { ServiceCallsService } from '../../services/service-calls.service';
 import { HttpResponse } from '@angular/common/http';
 import { UtilService } from '../../services/util.service';
@@ -58,22 +58,26 @@ export class DocManagementComponent {
         this.documents = toSignal<any[]>(
             this.refreshTable$.pipe(
                 tap(() => this.userService.showSpinner.set(true)),
-                switchMap(() => this.apiService.getDocumentsByUserId(userId).pipe(
-                    catchError((err) => {
-                        this.userService.showSpinner.set(false);
-                        this.userService.openToast.update(() => ({
-                            type: 'Error',
-                            message: 'Service call failed',
-                        }));
-                        return of([]);
-                    })
-                ))
+                switchMap(() =>
+                    this.apiService.getDocumentsByUserId(userId).pipe(
+                        catchError((err) => {
+                            this.userService.showSpinner.set(false);
+                            this.userService.openToast.update(() => ({
+                                type: 'Error',
+                                message: 'Service call failed',
+                            }));
+                            return of([]);
+                        }),
+                        takeUntilDestroyed()
+                    )
+                )
             )
         );
         effect(() => {
-            if (this.documents()) {
-                this.userService.showSpinner.set(false);
-            }
+            this.documents() &&
+                untracked(() => {
+                    this.userService.showSpinner.set(false);
+                });
         });
     }
 

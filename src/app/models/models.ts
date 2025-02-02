@@ -8,13 +8,14 @@ export interface User {
     lastname: string;
     address2: string;
     phonenumber: string;
-    userid: number;
+    userid: string;
     accountid: number;
     id: number;
     address1: string;
     emailid: string;
     role: number;
     password: string;
+    subscriptiontype: string;
 }
 
 export interface Account {

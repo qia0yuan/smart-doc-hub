@@ -4,8 +4,16 @@ import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { IconField } from 'primeng/iconfield';
 import { InputIcon } from 'primeng/inputicon';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import {
+    FormBuilder,
+    FormGroup,
+    ReactiveFormsModule,
+    Validators,
+} from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { UserService } from '../../../services/user.service';
+import { ServiceCallsService } from '../../../services/service-calls.service';
+import { User } from '../../../models/models';
 
 @Component({
     selector: 'app-profile',
@@ -23,6 +31,7 @@ import { CommonModule } from '@angular/common';
 })
 export class ProfileComponent {
     action = input<string>('');
+    from = input<string>('');
     closed = output();
     visible = signal<boolean>(false);
     closeIconClicked = effect(() => {
@@ -30,7 +39,11 @@ export class ProfileComponent {
     });
     userProfileForm!: FormGroup;
 
-    constructor(private fb: FormBuilder) {
+    constructor(
+        private fb: FormBuilder,
+        private userService: UserService,
+        private apiService: ServiceCallsService
+    ) {
         effect(() => {
             this.visible.set(this.action() ? true : false);
         });
@@ -38,13 +51,15 @@ export class ProfileComponent {
 
     ngOnInit() {
         this.userProfileForm = this.fb.group({
-            firstname: [''],
-            lastname: [''],
-            email: [''],
-            address: [''],
+            firstname: ['', [Validators.required]],
+            lastname: ['', [Validators.required]],
+            email: ['', [Validators.required, Validators.email]],
+            address1: [''],
+            address2: [''],
             telephone: [''],
             company: [''],
             password: [''],
+            userid: [''],
         });
     }
 
@@ -59,7 +74,40 @@ export class ProfileComponent {
 
     onSubmit() {
         if (this.userProfileForm.valid) {
-            this.onBtnClick('cancel');
+            const user: User = {
+                accountid: this.userService.user().currentUser?.accountid,
+                firstname:
+                this.userProfileForm.get('firstname')?.value || '',
+                lastname: this.userProfileForm.get('lastname')?.value || '',
+                address1: this.userProfileForm.get('address1')?.value || '',
+                address2: this.userProfileForm.get('address2')?.value || '',
+                emailid: this.userProfileForm.get('email')?.value || '',
+                phonenumber:
+                this.userProfileForm.get('telephone')?.value || '',
+                role: 0,
+                id: 0,
+                userid: this.userProfileForm.get('userid')?.value || '',
+                password: this.userProfileForm.get('password')?.value || '',
+                subscriptiontype: '',
+            },
+            userId = this.userService.user().currentUser?.id,
+            create$ = this.from() === 'invitee' ? this.apiService.createInvitee(user) : this.apiService.createUser(user);
+                create$.subscribe({
+                    next: (resp) => {
+                        this.userProfileForm.reset();
+                        this.onBtnClick('cancel');
+                        this.userService.openToast.update(() => ({
+                            type: 'Success',
+                            message: 'Service call successful',
+                        }));
+                    },
+                    error: (err) => {
+                        this.userService.openToast.update(() => ({
+                            type: 'Error',
+                            message: 'Service call failed',
+                        }));
+                    },
+                });
+            }
         }
     }
-}
