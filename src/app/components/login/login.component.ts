@@ -6,7 +6,7 @@ import {
     ReactiveFormsModule,
     Validators,
 } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FloatLabel } from 'primeng/floatlabel';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
@@ -44,8 +44,21 @@ export class LoginComponent {
     constructor(
         private router: Router,
         private userService: UserService,
-        private apiService: ServiceCallsService
+        private apiService: ServiceCallsService,
+        private route: ActivatedRoute
     ) {}
+
+    ngOnInit() {
+        this.route.queryParams.subscribe((params) => {
+            if (params && params['initationtoken']) {
+                this.userService.user.update((user) => ({
+                    ...user,
+                    token: params['initationtoken'],
+                }));
+                this.router.navigate(['/register']);
+            }
+        });
+    }
 
     clear(field: string) {
         this.loginForm.get(field)?.reset();
@@ -56,38 +69,40 @@ export class LoginComponent {
             const username = this.loginForm.get('username')?.value!,
                 password = this.loginForm.get('password')?.value!;
             this.userService.showSpinner.update(() => true);
-            this.apiService.login(username, password).pipe(
-              concatMap((token: any) => {
-                if (token) {
-                  this.userService.user.update((user) => ({
-                    ...user,
-                    token: token.access_token,
-                  }));
-                  return this.apiService.getUserByUsername(username);
-                } else {
-                  throw new Error('Login failed');
-                }
-              })
-            )
-            .subscribe({
-                next: (data: any) => {
-                    this.userService.showSpinner.update(() => false);
-                    if (data) {
-                        this.userService.user.update((user) => ({
-                            ...user,
-                            currentUser: data,
+            this.apiService
+                .login(username, password)
+                .pipe(
+                    concatMap((token: any) => {
+                        if (token) {
+                            this.userService.user.update((user) => ({
+                                ...user,
+                                token: token.access_token,
+                            }));
+                            return this.apiService.getUserByUsername(username);
+                        } else {
+                            throw new Error('Login failed');
+                        }
+                    })
+                )
+                .subscribe({
+                    next: (data: any) => {
+                        this.userService.showSpinner.update(() => false);
+                        if (data) {
+                            this.userService.user.update((user) => ({
+                                ...user,
+                                currentUser: data,
+                            }));
+                            this.router.navigate(['/home']);
+                        }
+                    },
+                    error: (err: any) => {
+                        this.userService.showSpinner.update(() => false);
+                        this.userService.openToast.update(() => ({
+                            type: 'Error',
+                            message: 'Login failed',
                         }));
-                        this.router.navigate(['/home']);
-                    }
-                },
-                error: (err: any) => {
-                    this.userService.showSpinner.update(() => false);
-                    this.userService.openToast.update(() => ({
-                        type: 'Error',
-                        message: 'Login failed',
-                    }));
-                },
-            });
+                    },
+                });
         }
     }
 }

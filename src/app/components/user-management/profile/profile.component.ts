@@ -30,7 +30,7 @@ import { User } from '../../../models/models';
     styleUrl: './profile.component.scss',
 })
 export class ProfileComponent {
-    action = input<string>('');
+    action = input<string>('Create');
     from = input<string>('');
     closed = output();
     visible = signal<boolean>(false);
@@ -50,6 +50,7 @@ export class ProfileComponent {
     }
 
     ngOnInit() {
+        this.visible.set(false);
         this.userProfileForm = this.fb.group({
             firstname: ['', [Validators.required]],
             lastname: ['', [Validators.required]],

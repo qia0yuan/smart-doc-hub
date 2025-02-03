@@ -117,7 +117,8 @@ export class InviteeManagementComponent {
                             type: 'Success',
                             message: 'Invitation(s) sent',
                         }));
-                        this.refreshTable$.next();
+                        this.selectedUsers.set([]);
+                        this.userService.showSpinner.set(false);
                     },
                     error: (err) => {
                         this.userService.showSpinner.set(false);
