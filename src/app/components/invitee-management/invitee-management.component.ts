@@ -17,6 +17,7 @@ import { User } from '../../models/models';
 import {
     BehaviorSubject,
     catchError,
+    forkJoin,
     of,
     switchMap,
     tap,
@@ -140,13 +141,16 @@ export class InviteeManagementComponent {
     }
 
     onDelete(rows: any) {
-        const callback = () => {
+        const selectedUsers = rows.map((user: User) => this.apiService.deleteInvitees(user.id)),
+        callback = () => {
             this.userService.showSpinner.set(true);
-            this.apiService.deleteDocument(rows[0].document_id).subscribe({
+            forkJoin(selectedUsers)
+            .pipe(catchError((err) => throwError(() => err)))
+            .subscribe({
                 next: (resp) => {
                     this.userService.openToast.update(() => ({
                         type: 'Success',
-                        message: 'Invitee(s) Deleted',
+                        message: 'Invitee(s) deleted successfully',
                     }));
                     this.refreshTable$.next();
                 },
@@ -154,8 +158,9 @@ export class InviteeManagementComponent {
                     this.userService.showSpinner.set(false);
                     this.userService.openToast.update(() => ({
                         type: 'Error',
-                        message: 'Deletion failed',
+                        message: 'Failed to delete invitee(s)',
                     }));
+                    this.userService.showSpinner.set(false);
                 },
             });
         };

@@ -1,4 +1,11 @@
-import { Component, DestroyRef, effect, Signal, signal, untracked } from '@angular/core';
+import {
+    Component,
+    DestroyRef,
+    effect,
+    Signal,
+    signal,
+    untracked,
+} from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { TableModule } from 'primeng/table';
 import { ProfileComponent } from './profile/profile.component';
@@ -10,11 +17,13 @@ import { User } from '../../models/models';
 import {
     BehaviorSubject,
     catchError,
+    forkJoin,
     of,
     switchMap,
     tap,
     throwError,
 } from 'rxjs';
+import { ConfirmationService } from 'primeng/api';
 
 @Component({
     selector: 'app-user-management',
@@ -24,14 +33,15 @@ import {
 })
 export class UserManagementComponent {
     users!: Signal<User[] | undefined>;
-    selectedUsers!: User;
+    selectedUsers = signal<User[]>([]);
     action = signal<string>('');
     refreshTable$ = new BehaviorSubject<void>(undefined);
 
     constructor(
         private userService: UserService,
         private apiService: ServiceCallsService,
-        private destroyRef: DestroyRef
+        private destroyRef: DestroyRef,
+        private confirmationService: ConfirmationService
     ) {
         const accountId = this.userService.user().currentUser?.accountid;
         this.users = toSignal<User[]>(
@@ -66,5 +76,52 @@ export class UserManagementComponent {
         this.action.set(action);
     }
 
-    onDelete() {}
+    confirm(cb: () => void) {
+        this.confirmationService.confirm({
+            header: 'Are you sure?',
+            message: 'Please confirm to proceed.',
+            accept: cb,
+            reject: () => {
+                // this.userService.openToast.update(() => ({
+                //     type: 'info',
+                //     message: 'You have rejected',
+                // }));
+            },
+        });
+    }
+
+    onDelete(rows: User[]) {
+        const selectedUsers = rows.map((user) =>
+                this.apiService.deleteUsers(user.id)
+            ),
+            callback = () => {
+                this.userService.showSpinner.set(true);
+                forkJoin(selectedUsers)
+                    .pipe(catchError((err) => throwError(() => err)))
+                    .subscribe({
+                        next: (res) => {
+                            this.userService.openToast.update(() => ({
+                                type: 'Success',
+                                message: 'User(s) deleted successfully',
+                            }));
+                            this.refreshTable$.next();
+                        },
+                        error: (err) => {
+                            this.userService.openToast.update(() => ({
+                                type: 'Error',
+                                message: 'Failed to delete user(s)',
+                            }));
+                            this.userService.showSpinner.set(false);
+                        },
+                    });
+            };
+        if (!rows.length) {
+            this.userService.openToast.update(() => ({
+                type: 'Warn',
+                message: 'Please select user(s)',
+            }));
+        } else {
+            this.confirm(callback);
+        }
+    }
 }

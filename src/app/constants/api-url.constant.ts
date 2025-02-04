@@ -7,6 +7,7 @@ export const ENDPOINTS = {
     USER: 'user/',
     USERS_LIST: 'account/{account_id}/user',
     INVITEE: 'invitee/',
+    INVITEE_CRUD: 'invitee/{invitee_id}',
     INVITEES_LIST: 'account/{account_id}/invitee',
     SEND_INVITATION: 'user/{user_id}/invite', 
     ACCOUNT_CRUD: 'account/{account_id}',

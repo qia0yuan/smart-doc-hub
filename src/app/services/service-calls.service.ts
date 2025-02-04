@@ -100,4 +100,14 @@ export class ServiceCallsService {
     return this.http.delete<any>(url);
   }
 
+  deleteInvitees(id: number): Observable<User> {
+    const url = this.getUrl(ENDPOINTS.INVITEE_CRUD, {invitee_id: id});
+    return this.http.delete<User>(url);
+  }
+
+  deleteUsers(id: number): Observable<User> {
+    const url = this.getUrl(ENDPOINTS.USER_CRUD, {user_id: id});
+    return this.http.delete<User>(url);
+  }
+
 }
