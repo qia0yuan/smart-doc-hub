@@ -50,10 +50,10 @@ export class LoginComponent {
 
     ngOnInit() {
         this.route.queryParams.subscribe((params) => {
-            if (params && params['initationtoken']) {
+            if (params && params['invitationtoken']) {
                 this.userService.user.update((user) => ({
                     ...user,
-                    token: params['initationtoken'],
+                    token: params['invitationtoken'],
                 }));
                 this.router.navigate(['/register']);
             }
