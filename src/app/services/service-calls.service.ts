@@ -40,6 +40,11 @@ export class ServiceCallsService {
     return this.http.post<User>(url, user);
   }
 
+  updateUser(user: User): Observable<User> {
+    const url = this.getUrl(ENDPOINTS.USER_CRUD, {user_id: user.id});
+    return this.http.put<User>(url, user);
+  }
+
   createInvitee(invitee: User): Observable<User> {
     const url = this.getUrl(ENDPOINTS.INVITEE);
     return this.http.post<User>(url, invitee);
@@ -95,9 +100,9 @@ export class ServiceCallsService {
     return this.http.get<any>(url, options);
   }
 
-  deleteDocument(id: number): Observable<any> {
+  deleteDocument(id: number): Observable<Document> {
     const url = this.getUrl(ENDPOINTS.DOCUMENT_DELETE, {doc_id: id});
-    return this.http.delete<any>(url);
+    return this.http.delete<Document>(url);
   }
 
   deleteInvitees(id: number): Observable<User> {

@@ -152,6 +152,7 @@ export class InviteeManagementComponent {
                         type: 'Success',
                         message: 'Invitee(s) deleted successfully',
                     }));
+                    this.selectedUsers.set([]);
                     this.refreshTable$.next();
                 },
                 error: (err) => {
@@ -160,6 +161,7 @@ export class InviteeManagementComponent {
                         type: 'Error',
                         message: 'Failed to delete invitee(s)',
                     }));
+                    this.selectedUsers.set([]);
                     this.userService.showSpinner.set(false);
                 },
             });

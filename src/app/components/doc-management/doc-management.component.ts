@@ -1,4 +1,11 @@
-import { Component, effect, signal, Signal, untracked } from '@angular/core';
+import {
+    Component,
+    DestroyRef,
+    effect,
+    signal,
+    Signal,
+    untracked,
+} from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { TableModule } from 'primeng/table';
 import { FileUpload } from 'primeng/fileupload';
@@ -52,7 +59,8 @@ export class DocManagementComponent {
         private userService: UserService,
         private apiService: ServiceCallsService,
         private utilService: UtilService,
-        private confirmationService: ConfirmationService
+        private confirmationService: ConfirmationService,
+        private destroyRef: DestroyRef
     ) {
         const userId = this.userService.user().currentUser?.id;
         this.documents = toSignal<any[]>(
@@ -68,7 +76,7 @@ export class DocManagementComponent {
                             }));
                             return of([]);
                         }),
-                        takeUntilDestroyed()
+                        takeUntilDestroyed(this.destroyRef)
                     )
                 )
             )
@@ -195,26 +203,33 @@ export class DocManagementComponent {
         }
     }
 
-    onDelete(rows: any) {
-        const callback = () => {
-            this.userService.showSpinner.set(true);
-            this.apiService.deleteDocument(rows[0].document_id).subscribe({
-                next: (resp) => {
-                    this.userService.openToast.update(() => ({
-                        type: 'Success',
-                        message: 'File(s) Deleted',
-                    }));
-                    this.refreshTable$.next();
-                },
-                error: (err) => {
-                    this.userService.showSpinner.set(false);
-                    this.userService.openToast.update(() => ({
-                        type: 'Error',
-                        message: 'Deletion failed',
-                    }));
-                },
-            });
-        };
+    onDelete(rows: Document[]) {
+        const selectedDocs = rows.map((row) =>
+                this.apiService.deleteDocument(row.document_id)
+            ),
+            callback = () => {
+                this.userService.showSpinner.set(true);
+                forkJoin(selectedDocs)
+                    .pipe(catchError((err) => throwError(() => err)))
+                    .subscribe({
+                        next: (resp) => {
+                            this.userService.openToast.update(() => ({
+                                type: 'Success',
+                                message: 'File(s) Deleted successfully',
+                            }));
+                            this.selectedDocuments.set([]);
+                            this.refreshTable$.next();
+                        },
+                        error: (err) => {
+                            this.userService.showSpinner.set(false);
+                            this.userService.openToast.update(() => ({
+                                type: 'Error',
+                                message: 'Failed to delete file(s)',
+                            }));
+                            this.selectedDocuments.set([]);
+                        },
+                    });
+            };
         if (!rows.length) {
             this.userService.openToast.update(() => ({
                 type: 'Warn',

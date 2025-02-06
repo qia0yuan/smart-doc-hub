@@ -104,6 +104,7 @@ export class UserManagementComponent {
                                 type: 'Success',
                                 message: 'User(s) deleted successfully',
                             }));
+                            this.selectedUsers.set([]);
                             this.refreshTable$.next();
                         },
                         error: (err) => {
@@ -111,6 +112,7 @@ export class UserManagementComponent {
                                 type: 'Error',
                                 message: 'Failed to delete user(s)',
                             }));
+                            this.selectedUsers.set([]);
                             this.userService.showSpinner.set(false);
                         },
                     });

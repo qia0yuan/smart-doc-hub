@@ -31,7 +31,7 @@ import { User } from '../../../models/models';
 })
 export class ProfileComponent {
     action = input<string>('Create');
-    from = input<string>('');
+    from = input<string>('subscriber');
     closed = output();
     visible = signal<boolean>(false);
     closeIconClicked = effect(() => {
@@ -76,7 +76,7 @@ export class ProfileComponent {
     onSubmit() {
         if (this.userProfileForm.valid) {
             const user: User = {
-                accountid: this.userService.user().currentUser?.accountid,
+                accountid: this.userService.user().currentUser?.accountid || 50,
                 firstname:
                 this.userProfileForm.get('firstname')?.value || '',
                 lastname: this.userProfileForm.get('lastname')?.value || '',
@@ -85,14 +85,14 @@ export class ProfileComponent {
                 emailid: this.userProfileForm.get('email')?.value || '',
                 phonenumber:
                 this.userProfileForm.get('telephone')?.value || '',
-                role: 0,
-                id: 0,
+                role: 1234,
+                id: 294,
                 userid: this.userProfileForm.get('userid')?.value || '',
                 password: this.userProfileForm.get('password')?.value || '',
                 subscriptiontype: '',
             },
             userId = this.userService.user().currentUser?.id,
-            create$ = this.from() === 'invitee' ? this.apiService.createInvitee(user) : this.apiService.createUser(user);
+            create$ = this.from() === 'invitee' ? this.apiService.createInvitee(user) : this.apiService.updateUser(user);
                 create$.subscribe({
                     next: (resp) => {
                         this.userProfileForm.reset();
