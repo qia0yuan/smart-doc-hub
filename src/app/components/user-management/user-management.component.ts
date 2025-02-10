@@ -74,6 +74,25 @@ export class UserManagementComponent {
 
     profileAction(action: string) {
         this.action.set(action);
+        if (action === 'Update') {
+            this.userService.selectedUser.update((user) => ({
+                ...user,
+                firstname: this.selectedUsers()[0].firstname,
+                lastname: this.selectedUsers()[0].lastname,
+                email: this.selectedUsers()[0].emailid,
+                address2: this.selectedUsers()[0].address2,
+                phonenumber: this.selectedUsers()[0].phonenumber,
+                userid: this.selectedUsers()[0].userid,
+                accountid: this.selectedUsers()[0].accountid,
+                id: this.selectedUsers()[0].id,
+                address1: this.selectedUsers()[0].address1,
+                role: this.selectedUsers()[0].role,
+                password: this.selectedUsers()[0].password,
+                subscriptiontype: this.selectedUsers()[0].subscriptiontype,
+            }));
+        } else {
+            this.userService.selectedUser.set({} as User);
+        }
     }
 
     confirm(cb: () => void) {

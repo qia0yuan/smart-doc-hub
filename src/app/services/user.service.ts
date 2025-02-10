@@ -23,6 +23,20 @@ export class UserService {
       subscriptiontype: '',
     },
   });
+  selectedUser = signal<User>({
+    firstname: '',
+    lastname: '',
+    address2: '',
+    phonenumber: '',
+    userid: '',
+    accountid: 0,
+    id: 0,
+    address1: '',
+    emailid: '',
+    role: 0,
+    password: '',
+    subscriptiontype: '',
+  });
   openToast = signal<ToastConfig>({});
   showSpinner = signal<boolean>(false);
 

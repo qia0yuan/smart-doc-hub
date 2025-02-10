@@ -1,4 +1,4 @@
-import { Component, computed, signal } from '@angular/core';
+import { Component, computed, DestroyRef, signal } from '@angular/core';
 import {
     FormBuilder,
     FormControl,
@@ -17,6 +17,7 @@ import { UserService } from '../../services/user.service';
 import { ServiceCallsService } from '../../services/service-calls.service';
 import { CommonModule } from '@angular/common';
 import { concatMap } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
     selector: 'app-login',
@@ -45,15 +46,39 @@ export class LoginComponent {
         private router: Router,
         private userService: UserService,
         private apiService: ServiceCallsService,
-        private route: ActivatedRoute
+        private route: ActivatedRoute,
+        private destroyRef: DestroyRef,
     ) {}
 
     ngOnInit() {
-        this.route.queryParams.subscribe((params) => {
-            if (params && params['invitationtoken']) {
+        this.route.queryParams.pipe(
+            concatMap((params) => {
+                if (params && params['invitationtoken']) {
+                    this.userService.user.update((user) => ({
+                        ...user,
+                        token: params['invitationtoken'],
+                    }));
+                    return this.apiService.getInviteeDetails(
+                        params['invitationtoken']
+                    );
+                } else {
+                    return [];
+                }
+            }),
+            takeUntilDestroyed(this.destroyRef)
+        )
+        .subscribe((invitee: any) => {
+            if (invitee) {
                 this.userService.user.update((user) => ({
                     ...user,
-                    token: params['invitationtoken'],
+                    isInvitee: true,
+                    currentUser: {
+                        ...user.currentUser,
+                        emailid: invitee[0]?.invitationusers[0]?.emailid,
+                        firstname: invitee[0]?.invitationusers[0]?.userfirstname,
+                        lastname: invitee[0]?.invitationusers[0]?.userlastname,
+                        id: invitee[0]?.invitationusers[0]?.userid,
+                    }
                 }));
                 this.router.navigate(['/register']);
             }
