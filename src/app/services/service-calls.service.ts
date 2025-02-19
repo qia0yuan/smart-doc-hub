@@ -13,6 +13,13 @@ export class ServiceCallsService {
 
     constructor(private http: HttpClient) {}
 
+    removeTrailingSlash(url: string) {
+        if (url.endsWith('/')) {
+            return url.slice(0, -1);
+        }
+        return url;
+    }
+
     getUrl(endpoint: string, ...params: { [key: string]: unknown }[]) {
         const baseUrl = BASE_URL;
         let new_endpoint = '';
@@ -36,7 +43,7 @@ export class ServiceCallsService {
     }
 
     createUser(user: User): Observable<User> {
-        const url = this.getUrl(ENDPOINTS.USER);
+        const url = this.removeTrailingSlash(this.getUrl(ENDPOINTS.USER));
         return this.http.post<User>(url, user);
     }
 

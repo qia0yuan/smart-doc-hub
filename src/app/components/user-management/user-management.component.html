@@ -48,4 +48,4 @@
         </p-table>
     </div>
 </div>
-<app-profile [action]="action()" from="subscriber" (closed)="action.set('')"></app-profile>
+<app-profile [action]="action()" from="subscriber" (closed)="action.set('');refreshTable$.next()"></app-profile>

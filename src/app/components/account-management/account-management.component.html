@@ -38,8 +38,8 @@
                         <td>{{acct.phonenumber}}</td>
                         <td>{{acct.createdby}}</td>
                         <td>{{acct.updatedby}}</td>
-                        <td>{{acct.primarycontact.userid}}</td>
-                        <td>{{acct.secondarycontact.userid}}</td>
+                        <td>{{acct.primarycontact?.userid}}</td>
+                        <td>{{acct.secondarycontact?.userid}}</td>
                     </tr>
                 </ng-template>
                 <ng-template #emptymessage let-columns>

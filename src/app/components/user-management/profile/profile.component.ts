@@ -147,7 +147,7 @@ export class ProfileComponent {
                     id: this.userService.user().currentUser?.id || 0,
                     userid: this.userProfileForm.get('userid')?.value || '',
                     password: this.userProfileForm.get('password')?.value || '',
-                    subscriptiontype: '',
+                    subscriptiontype: this.from() === 'subscriber' ? 'subscriber' : '',
                 },
                 userId = this.userService.user().currentUser?.id,
                 create$ =
