@@ -42,6 +42,11 @@ export class ServiceCallsService {
         return this.http.post<any>(url, body);
     }
 
+    createAccount(account: any): Observable<any> {
+        const url = this.removeTrailingSlash(this.getUrl(ENDPOINTS.ACCOUNT));
+        return this.http.post<any>(url, account);
+    }
+
     createUser(user: User): Observable<User> {
         const url = this.removeTrailingSlash(this.getUrl(ENDPOINTS.USER));
         return this.http.post<User>(url, user);

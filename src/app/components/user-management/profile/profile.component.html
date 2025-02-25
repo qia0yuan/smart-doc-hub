@@ -65,7 +65,7 @@
                     style="cursor: pointer;" (click)="clear('telephone')" />
             </p-iconfield>
         </div>
-        <div class="flex items-center gap-4 mb-8">
+        <div class="flex items-center gap-4" [ngClass]="from() === 'login' ? 'mb-4' : 'mb-8'">
             <label for="company" class="font-semibold w-24">Company</label>
             <p-iconfield class="grow">
                 <input pInputText id="company" class="flex-auto w-full" formControlName="company" autocomplete="off" />
@@ -73,7 +73,169 @@
                     style="cursor: pointer;" (click)="clear('company')" />
             </p-iconfield>
         </div>
-        <div class="flex justify-end gap-2">
+        @if (from() === 'login')  {
+            <p-accordion value="" expandIcon = "pi pi-plus" collapseIcon = "pi pi-minus">
+                <p-accordion-panel value="0" formGroupName="primary">
+                    <p-accordion-header>Primary Contact</p-accordion-header>
+                    <p-accordion-content>
+                        <div class="m-4">
+                            <div class="flex items-center gap-4 mb-4">
+                                <label for="p-firstname" class="font-semibold w-24 field-required">First Name</label>
+                                <p-iconfield class="grow">
+                                    <input pInputText id="p-firstname" class="flex-auto w-full" formControlName="firstname" autocomplete="off" />
+                                    <p-inputicon *ngIf="this.userProfileForm.get('primary')?.get('firstname')?.value" class="pi pi-times"
+                                        style="cursor: pointer;" (click)="clear('primary', 'firstname')" />
+                                </p-iconfield>
+                            </div>
+                            <div class="flex items-center gap-4 mb-4">
+                                <label for="p-lastname" class="font-semibold w-24 field-required">Last Name</label>
+                                <p-iconfield class="grow">
+                                    <input pInputText id="p-lastname" class="flex-auto w-full" formControlName="lastname" autocomplete="off" />
+                                    <p-inputicon *ngIf="this.userProfileForm.get('primary')?.get('lastname')?.value" class="pi pi-times"
+                                        style="cursor: pointer;" (click)="clear('primary', 'lastname')" />
+                                </p-iconfield>
+                            </div>
+                            <div class="flex items-center gap-4 mb-4">
+                                <label for="p-email" class="font-semibold w-24 field-required">Email ID</label>
+                                <p-iconfield class="grow">
+                                    <input type="email" pInputText id="p-email" class="flex-auto w-full" formControlName="email" autocomplete="off" />
+                                    <p-inputicon *ngIf="this.userProfileForm.get('primary')?.get('email')?.value" class="pi pi-times"
+                                        style="cursor: pointer;" (click)="clear('primary', 'email')" />
+                                </p-iconfield>
+                            </div>
+                            <div class="flex items-center gap-4 mb-4">
+                                <label for="p-userid" class="font-semibold w-24">Username</label>
+                                <p-iconfield class="grow">
+                                    <input type="userid" pInputText id="p-userid" class="flex-auto w-full" formControlName="userid" autocomplete="off" />
+                                    <p-inputicon *ngIf="this.userProfileForm.get('primary')?.get('userid')?.value" class="pi pi-times"
+                                        style="cursor: pointer;" (click)="clear('primary', 'userid')" />
+                                </p-iconfield>
+                            </div>
+                            <div class="flex items-center gap-4 mb-8">
+                                <label for="p-password" class="font-semibold w-24">Password</label>
+                                <p-iconfield class="grow">
+                                    <input type="password" pInputText id="p-password" class="flex-auto w-full" formControlName="password" autocomplete="off" />
+                                    <p-inputicon *ngIf="this.userProfileForm.get('primary')?.get('password')?.value" class="pi pi-times"
+                                        style="cursor: pointer;" (click)="clear('primary', 'password')" />
+                                </p-iconfield>
+                            </div>
+                            <div class="flex items-center gap-4 mb-4">
+                                <label for="p-address1" class="font-semibold w-24">Address 1</label>
+                                <p-iconfield class="grow">
+                                    <input pInputText id="p-address1" class="flex-auto w-full" formControlName="address1" autocomplete="off" />
+                                    <p-inputicon *ngIf="this.userProfileForm.get('primary')?.get('address1')?.value" class="pi pi-times"
+                                        style="cursor: pointer;" (click)="clear('primary', 'address1')" />
+                                </p-iconfield>
+                            </div>
+                            <div class="flex items-center gap-4 mb-4">
+                                <label for="p-address" class="font-semibold w-24">Address 2</label>
+                                <p-iconfield class="grow">
+                                    <input pInputText id="p-address2" class="flex-auto w-full" formControlName="address2" autocomplete="off" />
+                                    <p-inputicon *ngIf="this.userProfileForm.get('primary')?.get('address2')?.value" class="pi pi-times"
+                                        style="cursor: pointer;" (click)="clear('primary', 'address2')" />
+                                </p-iconfield>
+                            </div>
+                            <div class="flex items-center gap-4 mb-4">
+                                <label for="p-telephone" class="font-semibold w-24">Telephone</label>
+                                <p-iconfield class="grow">
+                                    <input pInputText id="p-telephone" class="flex-auto w-full" formControlName="telephone" autocomplete="off" />
+                                    <p-inputicon *ngIf="this.userProfileForm.get('primary')?.get('telephone')?.value" class="pi pi-times"
+                                        style="cursor: pointer;" (click)="clear('primary', 'telephone')" />
+                                </p-iconfield>
+                            </div>
+                            <div class="flex items-center gap-4 mb-8">
+                                <label for="p-company" class="font-semibold w-24">Company</label>
+                                <p-iconfield class="grow">
+                                    <input pInputText id="p-company" class="flex-auto w-full" formControlName="company" autocomplete="off" />
+                                    <p-inputicon *ngIf="this.userProfileForm.get('primary')?.get('company')?.value" class="pi pi-times"
+                                        style="cursor: pointer;" (click)="clear('primary', 'company')" />
+                                </p-iconfield>
+                            </div>
+                        </div>
+                    </p-accordion-content>
+                </p-accordion-panel>
+                <p-accordion-panel value="1" formGroupName="secondary">
+                    <p-accordion-header>Secondary Contact</p-accordion-header>
+                    <p-accordion-content>
+                        <div class="m-4">
+                            <div class="flex items-center gap-4 mb-4">
+                                <label for="s-firstname" class="font-semibold w-24 field-required">First Name</label>
+                                <p-iconfield class="grow">
+                                    <input pInputText id="s-firstname" class="flex-auto w-full" formControlName="firstname" autocomplete="off" />
+                                    <p-inputicon *ngIf="this.userProfileForm.get('secondary')?.get('firstname')?.value" class="pi pi-times"
+                                        style="cursor: pointer;" (click)="clear('secondary', 'firstname')" />
+                                </p-iconfield>
+                            </div>
+                            <div class="flex items-center gap-4 mb-4">
+                                <label for="s-lastname" class="font-semibold w-24 field-required">Last Name</label>
+                                <p-iconfield class="grow">
+                                    <input pInputText id="s-lastname" class="flex-auto w-full" formControlName="lastname" autocomplete="off" />
+                                    <p-inputicon *ngIf="this.userProfileForm.get('secondary')?.get('lastname')?.value" class="pi pi-times"
+                                        style="cursor: pointer;" (click)="clear('secondary', 'lastname')" />
+                                </p-iconfield>
+                            </div>
+                            <div class="flex items-center gap-4 mb-4">
+                                <label for="s-email" class="font-semibold w-24 field-required">Email ID</label>
+                                <p-iconfield class="grow">
+                                    <input type="email" pInputText id="s-email" class="flex-auto w-full" formControlName="email" autocomplete="off" />
+                                    <p-inputicon *ngIf="this.userProfileForm.get('secondary')?.get('email')?.value" class="pi pi-times"
+                                        style="cursor: pointer;" (click)="clear('secondary', 'email')" />
+                                </p-iconfield>
+                            </div>
+                            <div class="flex items-center gap-4 mb-4">
+                                <label for="s-userid" class="font-semibold w-24">Username</label>
+                                <p-iconfield class="grow">
+                                    <input type="userid" pInputText id="s-userid" class="flex-auto w-full" formControlName="userid" autocomplete="off" />
+                                    <p-inputicon *ngIf="this.userProfileForm.get('secondary')?.get('userid')?.value" class="pi pi-times"
+                                        style="cursor: pointer;" (click)="clear('secondary', 'userid')" />
+                                </p-iconfield>
+                            </div>
+                            <div class="flex items-center gap-4 mb-8">
+                                <label for="s-password" class="font-semibold w-24">Password</label>
+                                <p-iconfield class="grow">
+                                    <input type="password" pInputText id="s-password" class="flex-auto w-full" formControlName="password" autocomplete="off" />
+                                    <p-inputicon *ngIf="this.userProfileForm.get('secondary')?.get('password')?.value" class="pi pi-times"
+                                        style="cursor: pointer;" (click)="clear('secondary', 'password')" />
+                                </p-iconfield>
+                            </div>
+                            <div class="flex items-center gap-4 mb-4">
+                                <label for="s-address1" class="font-semibold w-24">Address 1</label>
+                                <p-iconfield class="grow">
+                                    <input pInputText id="s-address1" class="flex-auto w-full" formControlName="address1" autocomplete="off" />
+                                    <p-inputicon *ngIf="this.userProfileForm.get('secondary')?.get('address1')?.value" class="pi pi-times"
+                                        style="cursor: pointer;" (click)="clear('secondary', 'address1')" />
+                                </p-iconfield>
+                            </div>
+                            <div class="flex items-center gap-4 mb-4">
+                                <label for="s-address" class="font-semibold w-24">Address 2</label>
+                                <p-iconfield class="grow">
+                                    <input pInputText id="s-address2" class="flex-auto w-full" formControlName="address2" autocomplete="off" />
+                                    <p-inputicon *ngIf="this.userProfileForm.get('secondary')?.get('address2')?.value" class="pi pi-times"
+                                        style="cursor: pointer;" (click)="clear('secondary', 'address2')" />
+                                </p-iconfield>
+                            </div>
+                            <div class="flex items-center gap-4 mb-4">
+                                <label for="s-telephone" class="font-semibold w-24">Telephone</label>
+                                <p-iconfield class="grow">
+                                    <input pInputText id="s-telephone" class="flex-auto w-full" formControlName="telephone" autocomplete="off" />
+                                    <p-inputicon *ngIf="this.userProfileForm.get('secondary')?.get('telephone')?.value" class="pi pi-times"
+                                        style="cursor: pointer;" (click)="clear('secondary', 'telephone')" />
+                                </p-iconfield>
+                            </div>
+                            <div class="flex items-center gap-4 mb-8">
+                                <label for="s-company" class="font-semibold w-24">Company</label>
+                                <p-iconfield class="grow">
+                                    <input pInputText id="s-company" class="flex-auto w-full" formControlName="company" autocomplete="off" />
+                                    <p-inputicon *ngIf="this.userProfileForm.get('secondary')?.get('company')?.value" class="pi pi-times"
+                                        style="cursor: pointer;" (click)="clear('secondary', 'company')" />
+                                </p-iconfield>
+                            </div>
+                        </div>
+                    </p-accordion-content>
+                </p-accordion-panel>
+            </p-accordion>
+        }
+        <div class="flex justify-end gap-2 mt-8">
             <p-button label="Cancel" severity="secondary" (click)="onBtnClick('cancel')" />
             <p-button label="Save" type="submit" />
         </div>

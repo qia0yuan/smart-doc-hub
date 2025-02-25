@@ -15,6 +15,7 @@ import { UserService } from '../../../services/user.service';
 import { ServiceCallsService } from '../../../services/service-calls.service';
 import { User } from '../../../models/models';
 import { Router } from '@angular/router';
+import { AccordionModule } from 'primeng/accordion';
 
 @Component({
     selector: 'app-profile',
@@ -26,6 +27,7 @@ import { Router } from '@angular/router';
         InputIcon,
         ReactiveFormsModule,
         CommonModule,
+        AccordionModule,
     ],
     templateUrl: './profile.component.html',
     styleUrl: './profile.component.scss',
@@ -103,6 +105,46 @@ export class ProfileComponent {
                                   '',
                           ],
                       })
+                    : this.from() === 'login'
+                    ? this.fb.group({
+                          firstname: [''],
+                          lastname: [''],
+                          email: ['', [Validators.required, Validators.email]],
+                          address1: ['', [Validators.required]],
+                          address2: [''],
+                          telephone: ['', [Validators.required]],
+                          company: ['', [Validators.required]],
+                          password: [''],
+                          userid: [''],
+                          primary: this.fb.group({
+                              firstname: ['', [Validators.required]],
+                              lastname: ['', [Validators.required]],
+                              email: [
+                                  '',
+                                  [Validators.required, Validators.email],
+                              ],
+                              address1: [''],
+                              address2: [''],
+                              telephone: [''],
+                              company: [''],
+                              password: [''],
+                              userid: [''],
+                          }),
+                          secondary: this.fb.group({
+                              firstname: ['', [Validators.required]],
+                              lastname: ['', [Validators.required]],
+                              email: [
+                                  '',
+                                  [Validators.required, Validators.email],
+                              ],
+                              address1: [''],
+                              address2: [''],
+                              telephone: [''],
+                              company: [''],
+                              password: [''],
+                              userid: [''],
+                          }),
+                      })
                     : this.fb.group({
                           firstname: ['', [Validators.required]],
                           lastname: ['', [Validators.required]],
@@ -126,8 +168,12 @@ export class ProfileComponent {
         this.visible.set(false);
     }
 
-    clear(field: string) {
-        this.userProfileForm.get(field)?.reset();
+    clear(field1: string, field2?: string) {
+        if (field2) {
+            this.userProfileForm.get(field1)?.get(field2)?.reset();
+            return;
+        }
+        this.userProfileForm.get(field1)?.reset();
     }
 
     onSubmit() {
@@ -147,13 +193,49 @@ export class ProfileComponent {
                     id: this.userService.user().currentUser?.id || 0,
                     userid: this.userProfileForm.get('userid')?.value || '',
                     password: this.userProfileForm.get('password')?.value || '',
-                    subscriptiontype: this.from() === 'subscriber' ? 'subscriber' : '',
+                    subscriptiontype:
+                        this.from() === 'subscriber' ? 'subscriber' : '',
+                },
+                account = {
+                    name: this.userProfileForm.get('company')?.value || '',
+                    primarycontact: {
+                        "lastname": this.userProfileForm.get('primary')?.get('lastname')?.value || '',
+                        "firstname": this.userProfileForm.get('primary')?.get('firstname')?.value || '',
+                        "emailid": this.userProfileForm.get('primary')?.get('email')?.value || '',
+                        "role": 1,
+                        "password": this.userProfileForm.get('primary')?.get('password')?.value || '',
+                        "usertype": null,
+                        "address1": this.userProfileForm.get('primary')?.get('address1')?.value || '',
+                        "address2": this.userProfileForm.get('primary')?.get('address2')?.value || '',
+                        "phonenumber": this.userProfileForm.get('primary')?.get('telephone')?.value || '',
+                        "userid": this.userProfileForm.get('primary')?.get('userid')?.value || '',
+                        "parentuserid": null,
+                        "subscriptiontype": "subscriber"
+                    },
+                    secondarycontact: {
+                        "lastname": this.userProfileForm.get('secondary')?.get('lastname')?.value || '',
+                        "firstname": this.userProfileForm.get('secondary')?.get('firstname')?.value || '',
+                        "emailid": this.userProfileForm.get('secondary')?.get('email')?.value || '',
+                        "role": 1,
+                        "password": this.userProfileForm.get('secondary')?.get('password')?.value || '',
+                        "usertype": null,
+                        "address1": this.userProfileForm.get('secondary')?.get('address1')?.value || '',
+                        "address2": this.userProfileForm.get('secondary')?.get('address2')?.value || '',
+                        "phonenumber": this.userProfileForm.get('secondary')?.get('telephone')?.value || '',
+                        "userid": this.userProfileForm.get('secondary')?.get('userid')?.value || '',
+                        "parentuserid": null,
+                        "subscriptiontype": "subscriber"
+                    }
                 },
                 userId = this.userService.user().currentUser?.id,
                 create$ =
                     this.from() === 'invitee'
                         ? this.apiService.createInvitee(user)
-                        : this.from() === 'subscriber' ? this.apiService.createUser(user) : this.apiService.subscribeInvitee(user);
+                        : this.from() === 'subscriber'
+                        ? this.apiService.createUser(user)
+                        : this.from() === 'login'
+                        ? this.apiService.createAccount({...user, ...account})
+                        :this.apiService.subscribeInvitee(user);
             create$.subscribe({
                 next: (resp) => {
                     this.userProfileForm.reset();
@@ -162,7 +244,8 @@ export class ProfileComponent {
                         type: 'Success',
                         message: 'Service call successful',
                     }));
-                    this.from() === 'register' && this.router.navigate(['/login']);
+                    this.from() === 'register' &&
+                        this.router.navigate(['/login']);
                 },
                 error: (err) => {
                     this.userService.openToast.update(() => ({

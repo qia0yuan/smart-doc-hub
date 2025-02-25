@@ -12,6 +12,7 @@ export const ENDPOINTS = {
     SEND_INVITATION: 'user/{user_id}/invite', 
     SUBSCRIBE_INVITEE: 'invitee/{invitee_id}/subscribe',
     INVITEE_DETAILS: 'invitation/user',
+    ACCOUNT: 'account/',
     ACCOUNT_CRUD: 'account/{account_id}',
     DOCUMENT_QUERRY: 'documents/',
     DOCUMENTS_LIST: 'documents/files',

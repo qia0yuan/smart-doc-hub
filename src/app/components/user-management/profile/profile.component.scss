@@ -1,0 +1,12 @@
+:host ::ng-deep {
+    .p-accordionpanel {
+        box-shadow: none;
+    }
+
+    .p-accordionheader {
+        padding-inline: 0;
+        &:hover {
+            background: unset !important;
+        }
+    }
+}
