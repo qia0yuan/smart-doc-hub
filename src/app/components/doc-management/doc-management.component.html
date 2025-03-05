@@ -9,7 +9,7 @@
         <p-table
             [value]="documents() || []"
             [(selection)]="selectedDocuments"
-            dataKey="document_id"
+            dataKey="id"
             [tableStyle]="{'min-width': '50rem'}">
                 <ng-template #header>
                     <tr>
@@ -18,9 +18,8 @@
                         <th>Description</th>
                         <th>Created By</th>
                         <th>Updated By</th>
+                        <th>Shared By</th>
                         <th>Type</th>
-                        <th>Path</th>
-                        <th>Action ID</th>
                         <th>Document ID</th>
                     </tr>
                 </ng-template>
@@ -33,10 +32,9 @@
                         <td>{{document.description}}</td>
                         <td>{{document.createdby}}</td>
                         <td>{{document.updatedby}}</td>
+                        <td>{{document.sharedBy}}</td>
                         <td>{{document.type}}</td>
-                        <td>{{document.path}}</td>
-                        <td>{{document.action_id}}</td>
-                        <td>{{document.document_id}}</td>
+                        <td>{{document.id}}</td>
                     </tr>
                 </ng-template>
                 <ng-template #emptymessage let-columns>

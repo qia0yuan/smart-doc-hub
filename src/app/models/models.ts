@@ -35,9 +35,9 @@ export interface Document {
     title: string;
     description: string;
     createdby: number;
-    action_id: number;
+    sharedBy: number;
     path: string;
-    document_id: number;
+    id: number;
     updatedby: number;
     type: string;
 }

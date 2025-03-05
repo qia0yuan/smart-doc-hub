@@ -96,13 +96,15 @@ export class DocManagementComponent {
     }
 
     uploadEvent(ulCallback: () => void, clearCallback: () => void) {
-        const formData = new FormData();
+        const filesToUpload = [];
         for (let file of this.uploadedFiles) {
+            const formData = new FormData();
             formData.append('file', file);
+            filesToUpload.push(this.apiService.uploadDocument(formData));
             this.totalSize += parseInt(this.formatSize(file.size));
         }
         this.userService.showSpinner.set(true);
-        this.apiService.uploadDocument(formData).subscribe((response) => {
+        forkJoin(filesToUpload).subscribe((response) => {
             console.log(response);
             ulCallback();
             this.onTemplatedUpload();
@@ -169,7 +171,7 @@ export class DocManagementComponent {
             }));
         } else {
             const selectedDocs = rows.map((row) =>
-                this.apiService.downloadDocument(row.document_id)
+                this.apiService.downloadDocument(row.id)
             );
             this.userService.showSpinner.set(true);
             forkJoin(selectedDocs)
@@ -205,7 +207,7 @@ export class DocManagementComponent {
 
     onDelete(rows: Document[]) {
         const selectedDocs = rows.map((row) =>
-                this.apiService.deleteDocument(row.document_id)
+                this.apiService.deleteDocument(row.id)
             ),
             callback = () => {
                 this.userService.showSpinner.set(true);
