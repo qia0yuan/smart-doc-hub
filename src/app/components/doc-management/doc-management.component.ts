@@ -104,13 +104,15 @@ export class DocManagementComponent {
             this.totalSize += parseInt(this.formatSize(file.size));
         }
         this.userService.showSpinner.set(true);
-        forkJoin(filesToUpload).subscribe((response) => {
-            console.log(response);
-            ulCallback();
-            this.onTemplatedUpload();
-            clearCallback();
-            this.visible.set(false);
-        });
+        forkJoin(filesToUpload)
+            .pipe(catchError((err) => throwError(() => err)))
+            .subscribe((response) => {
+                console.log(response);
+                ulCallback();
+                this.onTemplatedUpload();
+                clearCallback();
+                this.visible.set(false);
+            });
     }
 
     onSelectedFiles(event: any) {
@@ -171,37 +173,42 @@ export class DocManagementComponent {
             }));
         } else {
             const selectedDocs = rows.map((row) =>
-                this.apiService.downloadDocument(row.id)
+                this.apiService
+                    .downloadDocument(row.id)
+                    .pipe(catchError((err) => of(row.title)))
             );
             this.userService.showSpinner.set(true);
-            forkJoin(selectedDocs)
-                .pipe(catchError((err) => throwError(() => err)))
-                .subscribe({
-                    next: (resp: HttpResponse<Blob>[]) => {
-                        this.userService.showSpinner.set(false);
-                        resp.forEach((response, i) => {
-                            if (response && response.ok) {
-                                this.utilService.saveDownloadedFile(
-                                    response,
-                                    rows[i].title
-                                );
-                            }
-                        });
+            forkJoin(selectedDocs).subscribe({
+                next: (resp: HttpResponse<Blob>[]) => {
+                    this.userService.showSpinner.set(false);
+                    let allOk = true;
+                    resp.forEach((response, i) => {
+                        if (response && response.ok) {
+                            this.utilService.saveDownloadedFile(
+                                response,
+                                rows[i].title
+                            );
+                            this.selectedDocuments.update((selected) =>
+                                selected.filter((doc) => doc.id !== rows[i].id)
+                            );
+                        } else {
+                            allOk = false;
+                        }
+                    });
+                    if (allOk) {
                         this.userService.openToast.update(() => ({
                             type: 'Success',
-                            message: 'File(s) Downloaded',
+                            message: 'All Files Downloaded',
                         }));
-                        this.selectedDocuments.set([]);
-                    },
-                    error: (err) => {
-                        this.userService.showSpinner.set(false);
+                    } else {
                         this.userService.openToast.update(() => ({
-                            type: 'danger',
+                            type: 'error',
                             title: 'Error',
-                            message: 'File(s) Downloaded failed',
+                            message: 'File(s) Download failed',
                         }));
-                    },
-                });
+                    }
+                },
+            });
         }
     }
 
