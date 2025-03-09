@@ -10,12 +10,14 @@ import { Account } from '../../models/models';
 import {
     BehaviorSubject,
     catchError,
+    forkJoin,
     map,
     of,
     switchMap,
     tap,
     throwError,
 } from 'rxjs';
+import { ConfirmationService } from 'primeng/api';
 
 @Component({
     selector: 'app-account-management',
@@ -25,13 +27,14 @@ import {
 })
 export class AccountManagementComponent {
     accounts!: Signal<Account[] | undefined>;
-    selectedUsers!: any;
+    selectedAccts = signal<Account[]>([]);
     action = signal<string>('');
     refreshTable$ = new BehaviorSubject<void>(undefined);
 
     constructor(
         private userService: UserService,
-        private apiService: ServiceCallsService
+        private apiService: ServiceCallsService,
+        private confirmationService: ConfirmationService,
     ) {
         const accountId = this.userService.user().currentUser?.accountid;
         this.accounts = toSignal<Account[]>(
@@ -67,5 +70,54 @@ export class AccountManagementComponent {
         this.action.set(action);
     }
 
-    onDelete() {}
+    onDelete(rows: Account[]) {
+        const selectedAccts = rows.map((row) =>
+                this.apiService.deleteAccount(row.id)
+            ),
+            callback = () => {
+                this.userService.showSpinner.set(true);
+                forkJoin(selectedAccts)
+                    .pipe(catchError((err) => throwError(() => err)))
+                    .subscribe({
+                        next: (resp) => {
+                            this.userService.openToast.update(() => ({
+                                type: 'Success',
+                                message: 'File(s) Deleted successfully',
+                            }));
+                            this.selectedAccts.set([]);
+                            this.refreshTable$.next();
+                        },
+                        error: (err) => {
+                            this.userService.showSpinner.set(false);
+                            this.userService.openToast.update(() => ({
+                                type: 'Error',
+                                message: 'Failed to delete file(s)',
+                            }));
+                            this.selectedAccts.set([]);
+                        },
+                    });
+            };
+        if (!rows.length) {
+            this.userService.openToast.update(() => ({
+                type: 'Warn',
+                message: 'Please select file(s)',
+            }));
+        } else {
+            this.confirm(callback);
+        }
+    }
+
+    confirm(cb: () => void) {
+        this.confirmationService.confirm({
+            header: 'Are you sure?',
+            message: 'Please confirm to proceed.',
+            accept: cb,
+            reject: () => {
+                // this.userService.openToast.update(() => ({
+                //     type: 'info',
+                //     message: 'You have rejected',
+                // }));
+            },
+        });
+    }
 }

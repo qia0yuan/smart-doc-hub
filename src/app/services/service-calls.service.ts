@@ -47,6 +47,13 @@ export class ServiceCallsService {
         return this.http.post<any>(url, account);
     }
 
+    deleteAccount(accountId: number): Observable<Account> {
+        const url = this.getUrl(ENDPOINTS.ACCOUNT_CRUD, {
+            account_id: accountId,
+        });
+        return this.http.delete<Account>(url);
+    }
+
     createUser(user: User): Observable<User> {
         const url = this.removeTrailingSlash(this.getUrl(ENDPOINTS.USER));
         return this.http.post<User>(url, user);
@@ -79,6 +86,11 @@ export class ServiceCallsService {
         const url = this.getUrl(ENDPOINTS.SEND_INVITATION, {
             user_id: inviteObj.id,
         });
+        return this.http.post(url, inviteObj);
+    }
+
+    shareDocument(inviteObj: any): Observable<any> {
+        const url = this.getUrl(ENDPOINTS.DOCUMENT_SHARE);
         return this.http.post(url, inviteObj);
     }
 

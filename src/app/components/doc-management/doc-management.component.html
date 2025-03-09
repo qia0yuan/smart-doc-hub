@@ -2,7 +2,7 @@
     <div class="flex gap-3 justify-content-end mb-3">
         <p-button label="Upload" [disabled]="!documents()" (click)="visible.set(true)"></p-button>
         <p-button label="Download" [disabled]="!documents()" (click)="onDownload(selectedDocuments())"></p-button>
-        <p-button label="Share" [disabled]="!documents()" (click)="onShare()"></p-button>
+        <p-button label="Share" [disabled]="!documents()" (click)="onShare(selectedDocuments())"></p-button>
         <p-button label="Delete" [disabled]="!documents()" (click)="onDelete(selectedDocuments())"></p-button>
     </div>
     <div class="card">
@@ -78,3 +78,4 @@
         </p-fileupload>
     </div>
 </p-dialog>
+<app-share [action]="share()" (closed)="share.set([]);selectedDocuments.set([])"></app-share>

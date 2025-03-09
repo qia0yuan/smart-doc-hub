@@ -1,0 +1,13 @@
+<p-dialog header="Share" [modal]="true" [(visible)]="visible" (onHide)="onClose()" [style]="{ width: '40rem', height: '100%' }" contentStyleClass="h-full">
+    <form [formGroup]="docShareForm" class="h-full d-flex flex-column" (ngSubmit)="onSubmit()">
+        <span class="p-text-secondary block mb-4">Select user(s) to share with</span>
+        <p-floatlabel class="w-full md:w-80">
+            <p-multiselect id="users" formControlName="users" [options]="users()" optionLabel="userid" filter [maxSelectedLabels]="3" [loading]="isLoading()" (onFocus)="loadUserList()" styleClass="w-full" />
+            <label for="users">Select Users</label>
+        </p-floatlabel>
+        <div class="flex justify-end gap-2 mt-8 mt-auto">
+            <p-button label="Cancel" severity="secondary" (click)="onClose()" />
+            <p-button label="Share" type="submit" />
+        </div>
+    </form>
+</p-dialog>

@@ -30,6 +30,7 @@ import {
     throwError,
 } from 'rxjs';
 import { Document } from '../../models/models';
+import { ShareComponent } from './share/share.component';
 
 @Component({
     selector: 'app-doc-management',
@@ -41,6 +42,7 @@ import { Document } from '../../models/models';
         CommonModule,
         Dialog,
         BadgeModule,
+        ShareComponent,
     ],
     templateUrl: './doc-management.component.html',
     styleUrl: './doc-management.component.scss',
@@ -53,6 +55,7 @@ export class DocManagementComponent {
     totalSize: number = 0;
     totalSizePercent: number = 0;
     refreshTable$ = new BehaviorSubject<void>(undefined);
+    share = signal<Document[]>([]);
 
     constructor(
         private config: PrimeNG,
@@ -249,8 +252,15 @@ export class DocManagementComponent {
         }
     }
 
-    onShare() {
-        // this.userService.showSpinner.set(true);
+    onShare(docs: Document[]) {
+        if (!docs.length) {
+            this.userService.openToast.update(() => ({
+                type: 'Warn',
+                message: 'Please select file(s)',
+            }));
+            return;
+        }
+        this.share.set(docs);
     }
 
     confirm(cb: () => void) {

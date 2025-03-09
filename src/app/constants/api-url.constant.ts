@@ -17,6 +17,7 @@ export const ENDPOINTS = {
     DOCUMENT_QUERRY: 'documents/',
     DOCUMENTS_LIST: 'documents/files',
     DOCUMENT_UPLOAD: 'documents/upload',
+    DOCUMENT_SHARE: 'documents/share',
     DOCUMENT_DELETE: 'documents/{doc_id}',
     DOCUMENT_DOWNLOAD: 'documents/download/{doc_id}',
     NOTIFICATIONS_CREATE: 'notifications',
