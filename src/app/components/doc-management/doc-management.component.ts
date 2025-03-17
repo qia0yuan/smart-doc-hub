@@ -33,6 +33,9 @@ import { Document } from '../../models/models';
 import { ShareComponent } from './share/share.component';
 import { SelectModule } from 'primeng/select';
 import { FormsModule } from '@angular/forms';
+import { IconFieldModule } from 'primeng/iconfield';
+import { InputIconModule } from 'primeng/inputicon';
+import { InputTextModule } from 'primeng/inputtext';
 
 @Component({
     selector: 'app-doc-management',
@@ -47,6 +50,9 @@ import { FormsModule } from '@angular/forms';
         ShareComponent,
         SelectModule,
         FormsModule,
+        IconFieldModule,
+        InputIconModule,
+        InputTextModule,
     ],
     templateUrl: './doc-management.component.html',
     styleUrl: './doc-management.component.scss',
@@ -287,5 +293,9 @@ export class DocManagementComponent {
                 // }));
             },
         });
+    }
+
+    onChange(table: any, event: any) {
+        table.filterGlobal(event.target.value, 'contains');
     }
 }
