@@ -31,6 +31,8 @@ import {
 } from 'rxjs';
 import { Document } from '../../models/models';
 import { ShareComponent } from './share/share.component';
+import { SelectModule } from 'primeng/select';
+import { FormsModule } from '@angular/forms';
 
 @Component({
     selector: 'app-doc-management',
@@ -43,6 +45,8 @@ import { ShareComponent } from './share/share.component';
         Dialog,
         BadgeModule,
         ShareComponent,
+        SelectModule,
+        FormsModule,
     ],
     templateUrl: './doc-management.component.html',
     styleUrl: './doc-management.component.scss',
@@ -56,6 +60,14 @@ export class DocManagementComponent {
     totalSizePercent: number = 0;
     refreshTable$ = new BehaviorSubject<void>(undefined);
     share = signal<Document[]>([]);
+    fileTypeOptions = [
+        { label: 'All', value: 'All' },
+        { label: 'Images', value: 'Image' },
+        { label: 'Videos', value: 'Video' },
+        { label: 'Documents', value: 'Document' },
+        { label: 'Audio', value: 'Audio' },
+    ];
+    selectedFileType = signal<string>('All');
 
     constructor(
         private config: PrimeNG,

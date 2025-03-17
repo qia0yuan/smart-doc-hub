@@ -53,6 +53,7 @@
                         <p-button (onClick)="uploadEvent(uploadCallback, clearCallback)" icon="pi pi-cloud-upload" [rounded]="true" [outlined]="true" severity="success" [disabled]="!files || files.length === 0" />
                         <p-button (onClick)="clearCallback()" icon="pi pi-times" [rounded]="true" [outlined]="true" severity="danger" [disabled]="!files || files.length === 0" />
                     </div>
+                    <p-select [options]="fileTypeOptions" [(ngModel)]="selectedFileType" optionLabel="label" placeholder="Select a type" size="small" class="w-full md:w-56" />
                 </div>
             </ng-template>
             <ng-template #empty>
