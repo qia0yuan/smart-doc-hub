@@ -5,6 +5,7 @@ export const ENDPOINTS = {
     USER_CRUD: 'user/{user_id}',
     USER_LOGIN: 'user/token',
     USER: 'user/',
+    USER_SEARCH: 'user/search',
     USERS_LIST: 'account/{account_id}/user',
     INVITEE: 'invitee/',
     INVITEE_CRUD: 'invitee/{invitee_id}',

@@ -13,21 +13,30 @@ import { UserService } from '../../services/user.service';
 import { ServiceCallsService } from '../../services/service-calls.service';
 import { CommonModule } from '@angular/common';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { User } from '../../models/models';
+import { User, UserSearch } from '../../models/models';
 import {
     BehaviorSubject,
     catchError,
     forkJoin,
+    map,
     of,
+    single,
     switchMap,
     tap,
     throwError,
 } from 'rxjs';
 import { ConfirmationService } from 'primeng/api';
+import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 
 @Component({
     selector: 'app-user-management',
-    imports: [TableModule, ButtonModule, ProfileComponent, CommonModule],
+    imports: [
+        TableModule,
+        ButtonModule,
+        ProfileComponent,
+        CommonModule,
+        PaginatorModule,
+    ],
     templateUrl: './user-management.component.html',
     styleUrl: './user-management.component.scss',
 })
@@ -35,7 +44,16 @@ export class UserManagementComponent {
     users!: Signal<User[] | undefined>;
     selectedUsers = signal<User[]>([]);
     action = signal<string>('');
-    refreshTable$ = new BehaviorSubject<void>(undefined);
+    refreshTable$: BehaviorSubject<UserSearch> =
+        new BehaviorSubject<UserSearch>({} as UserSearch);
+    startItem = signal<number>(0);
+    endItem = signal<number>(0);
+    first = signal<number>(0);
+    rows = signal<number>(5);
+    totalRecords: number = 0;
+    currentPage = signal<number>(0);
+    accountId = signal<number | undefined>(0);
+    filterObj = signal<UserSearch>({} as UserSearch);
 
     constructor(
         private userService: UserService,
@@ -43,12 +61,43 @@ export class UserManagementComponent {
         private destroyRef: DestroyRef,
         private confirmationService: ConfirmationService
     ) {
-        const accountId = this.userService.user().currentUser?.accountid;
+        effect(() => {
+            this.filterObj.update((obj) => ({
+                ...obj,
+                filters: {
+                    id: null,
+                    accountid: this.accountId() ?? 0,
+                    firstname: null,
+                    lastname: null,
+                    address1: null,
+                    address2: null,
+                    emailid: null,
+                    phonenumber: null,
+                    role: null,
+                    userid: null,
+                    parentuserid: null,
+                    usertype: null,
+                    subscriptiontype: null,
+                },
+                sort: null,
+                pagenumber: this.currentPage() + 1,
+                pagesize: this.rows(),
+            }));
+            console.log(this.filterObj());
+            this.refreshTable$.next(this.filterObj());
+        });
+        this.accountId.set(this.userService.user().currentUser?.accountid);
         this.users = toSignal<User[]>(
             this.refreshTable$.pipe(
                 tap(() => this.userService.showSpinner.set(true)),
-                switchMap(() =>
-                    this.apiService.getUserlist(accountId).pipe(
+                switchMap((fObj) =>
+                    this.apiService.getUserlist(fObj).pipe(
+                        map((res: any) => {
+                            !this.totalRecords && (this.totalRecords = res.count);
+                            this.startItem.set(this.endItem() + 1);
+                            this.endItem.set(this.startItem() + (this.rows() < this.totalRecords ? this.rows() : this.totalRecords) - 1);
+                            return res.data;
+                        }),
                         catchError((err) => {
                             this.userService.showSpinner.set(false);
                             this.userService.openToast.update(() => ({
@@ -124,7 +173,7 @@ export class UserManagementComponent {
                                 message: 'User(s) deleted successfully',
                             }));
                             this.selectedUsers.set([]);
-                            this.refreshTable$.next();
+                            // this.refreshTable$.next();
                         },
                         error: (err) => {
                             this.userService.openToast.update(() => ({
@@ -144,5 +193,15 @@ export class UserManagementComponent {
         } else {
             this.confirm(callback);
         }
+    }
+
+    onPageChange(event: PaginatorState) {
+        console.log(event);
+        this.first.set(event.first ?? this.first());
+        this.rows.set(event.rows ?? this.rows());
+        this.currentPage.set(event.page ?? this.currentPage() + 1);
+        this.endItem.set(event.first ?? this.endItem());
+        console.log(this.filterObj());
+        this.refreshTable$.next(this.filterObj());
     }
 }

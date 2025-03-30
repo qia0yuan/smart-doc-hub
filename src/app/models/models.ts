@@ -47,3 +47,24 @@ export interface ToastConfig {
     title?: string;
     message?: string;
 }
+
+export interface UserSearch {
+    filters: {
+        id: any;
+        accountid: number;
+        firstname: string | null;
+        lastname: string | null;
+        address1: string | null;
+        address2: string | null;
+        emailid: string | null;
+        phonenumber: any;
+        role: any;
+        userid: any;
+        parentuserid: any;
+        usertype: string | null;
+        subscriptiontype: string | null;
+    };
+    sort: any;
+    pagenumber: number;
+    pagesize: number;
+}

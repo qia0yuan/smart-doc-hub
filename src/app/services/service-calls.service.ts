@@ -3,7 +3,7 @@ import { BASE_URL, ENDPOINTS } from '../constants/api-url.constant';
 import { Observable } from 'rxjs';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from '../../environments/environment';
-import { Account, User } from '../models/models';
+import { Account, User, UserSearch } from '../models/models';
 
 @Injectable({
     providedIn: 'root',
@@ -114,11 +114,9 @@ export class ServiceCallsService {
         return this.http.get<Account>(url);
     }
 
-    getUserlist(accountId: number): Observable<User[]> {
-        const url = this.getUrl(ENDPOINTS.USERS_LIST, {
-            account_id: accountId,
-        });
-        return this.http.get<User[]>(url);
+    getUserlist(filterObj: UserSearch): Observable<User[]> {
+        const url = this.getUrl(ENDPOINTS.USER_SEARCH);
+        return this.http.post<User[]>(url, filterObj);
     }
 
     getInviteelist(accountId: number): Observable<User[]> {
