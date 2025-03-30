@@ -16,6 +16,7 @@ export const ENDPOINTS = {
     ACCOUNT: 'account/',
     ACCOUNT_CRUD: 'account/{account_id}',
     DOCUMENT_QUERRY: 'documents/',
+    DOCUMENT_SEARCH: 'documents/search',
     DOCUMENTS_LIST: 'documents/files',
     DOCUMENT_UPLOAD: 'documents/upload',
     DOCUMENT_SHARE: 'documents/share',

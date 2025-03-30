@@ -3,7 +3,7 @@ import { BASE_URL, ENDPOINTS } from '../constants/api-url.constant';
 import { Observable } from 'rxjs';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from '../../environments/environment';
-import { Account, User, UserSearch } from '../models/models';
+import { Account, DocSearch, User, UserSearch } from '../models/models';
 
 @Injectable({
     providedIn: 'root',
@@ -117,6 +117,11 @@ export class ServiceCallsService {
     getUserlist(filterObj: UserSearch): Observable<User[]> {
         const url = this.getUrl(ENDPOINTS.USER_SEARCH);
         return this.http.post<User[]>(url, filterObj);
+    }
+
+    getDoclist(filterObj: DocSearch): Observable<Document[]> {
+        const url = this.getUrl(ENDPOINTS.DOCUMENT_SEARCH);
+        return this.http.post<Document[]>(url, filterObj);
     }
 
     getInviteelist(accountId: number): Observable<User[]> {

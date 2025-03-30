@@ -68,3 +68,18 @@ export interface UserSearch {
     pagenumber: number;
     pagesize: number;
 }
+
+export interface DocSearch {
+    filters: {
+        sharedByUserId: any;
+        createdByUserId: number;
+        title: any;
+        category: any;
+        subcategory: any;
+    };
+    sort: {
+        docid: string;
+    };
+    pagenumber: number;
+    pagesize: number;
+}

@@ -25,17 +25,19 @@ import {
     catchError,
     forkJoin,
     of,
+    map,
     switchMap,
     tap,
     throwError,
 } from 'rxjs';
-import { Document } from '../../models/models';
+import { DocSearch, Document } from '../../models/models';
 import { ShareComponent } from './share/share.component';
 import { SelectModule } from 'primeng/select';
 import { FormsModule } from '@angular/forms';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { InputTextModule } from 'primeng/inputtext';
+import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 
 @Component({
     selector: 'app-doc-management',
@@ -53,6 +55,7 @@ import { InputTextModule } from 'primeng/inputtext';
         IconFieldModule,
         InputIconModule,
         InputTextModule,
+        PaginatorModule,
     ],
     templateUrl: './doc-management.component.html',
     styleUrl: './doc-management.component.scss',
@@ -64,7 +67,6 @@ export class DocManagementComponent {
     uploadedFiles: any[] = [];
     totalSize: number = 0;
     totalSizePercent: number = 0;
-    refreshTable$ = new BehaviorSubject<void>(undefined);
     share = signal<Document[]>([]);
     fileTypeOptions = [
         { label: 'All', value: 'All' },
@@ -74,6 +76,17 @@ export class DocManagementComponent {
         { label: 'Audio', value: 'Audio' },
     ];
     selectedFileType = signal<string>('All');
+    refreshTable$: BehaviorSubject<DocSearch> = new BehaviorSubject<DocSearch>(
+        {} as DocSearch
+    );
+    startItem = signal<number>(0);
+    endItem = signal<number>(0);
+    first = signal<number>(0);
+    rows = signal<number>(5);
+    totalRecords: number = 0;
+    currentPage = signal<number>(0);
+    userId = signal<number | undefined>(0);
+    filterObj = signal<DocSearch>({} as DocSearch);
 
     constructor(
         private config: PrimeNG,
@@ -83,12 +96,44 @@ export class DocManagementComponent {
         private confirmationService: ConfirmationService,
         private destroyRef: DestroyRef
     ) {
-        const userId = this.userService.user().currentUser?.id;
-        this.documents = toSignal<any[]>(
+        effect(() => {
+            this.filterObj.update((obj) => ({
+                ...obj,
+                filters: {
+                    sharedByUserId: null,
+                    createdByUserId: this.userId() ?? 0,
+                    title: null,
+                    category: null,
+                    subcategory: null,
+                },
+                sort: {
+                    docid: '',
+                },
+                pagenumber: this.currentPage() + 1,
+                pagesize: this.rows(),
+            }));
+            console.log(this.filterObj());
+            this.refreshTable$.next(this.filterObj());
+        });
+        this.userId.set(this.userService.user().currentUser?.id);
+        this.documents = toSignal<Document[]>(
             this.refreshTable$.pipe(
                 tap(() => this.userService.showSpinner.set(true)),
-                switchMap(() =>
-                    this.apiService.getDocumentsByUserId(userId).pipe(
+                switchMap((fObj: DocSearch) =>
+                    this.apiService.getDoclist(fObj).pipe(
+                        map((res: any) => {
+                            !this.totalRecords &&
+                                (this.totalRecords = res.count);
+                            this.startItem.set(this.endItem() + 1);
+                            this.endItem.set(
+                                this.startItem() +
+                                    (this.rows() < this.totalRecords
+                                        ? this.rows()
+                                        : this.totalRecords) -
+                                    1
+                            );
+                            return res.data;
+                        }),
                         catchError((err) => {
                             this.userService.showSpinner.set(false);
                             this.userService.openToast.update(() => ({
@@ -182,7 +227,7 @@ export class DocManagementComponent {
             type: 'Success',
             message: 'File(s) Uploaded',
         }));
-        this.refreshTable$.next();
+        // this.refreshTable$.next();
     }
 
     onDownload(rows: Document[]) {
@@ -248,7 +293,7 @@ export class DocManagementComponent {
                                 message: 'File(s) Deleted successfully',
                             }));
                             this.selectedDocuments.set([]);
-                            this.refreshTable$.next();
+                            // this.refreshTable$.next();
                         },
                         error: (err) => {
                             this.userService.showSpinner.set(false);
@@ -297,5 +342,15 @@ export class DocManagementComponent {
 
     onChange(table: any, event: any) {
         table.filterGlobal(event.target.value, 'contains');
+    }
+
+    onPageChange(event: PaginatorState) {
+        console.log(event);
+        this.first.set(event.first ?? this.first());
+        this.rows.set(event.rows ?? this.rows());
+        this.currentPage.set(event.page ?? this.currentPage() + 1);
+        this.endItem.set(event.first ?? this.endItem());
+        console.log(this.filterObj());
+        this.refreshTable$.next(this.filterObj());
     }
 }

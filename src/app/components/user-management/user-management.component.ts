@@ -20,7 +20,6 @@ import {
     forkJoin,
     map,
     of,
-    single,
     switchMap,
     tap,
     throwError,
@@ -90,7 +89,7 @@ export class UserManagementComponent {
         this.users = toSignal<User[]>(
             this.refreshTable$.pipe(
                 tap(() => this.userService.showSpinner.set(true)),
-                switchMap((fObj) =>
+                switchMap((fObj: UserSearch) =>
                     this.apiService.getUserlist(fObj).pipe(
                         map((res: any) => {
                             !this.totalRecords && (this.totalRecords = res.count);
