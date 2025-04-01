@@ -172,7 +172,7 @@ export class UserManagementComponent {
                                 message: 'User(s) deleted successfully',
                             }));
                             this.selectedUsers.set([]);
-                            // this.refreshTable$.next();
+                            this.refreshTable$.next(this.filterObj());
                         },
                         error: (err) => {
                             this.userService.openToast.update(() => ({

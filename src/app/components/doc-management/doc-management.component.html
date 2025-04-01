@@ -57,7 +57,7 @@
                     <div class="no-data">No Data Found</div>
                 </ng-template>
         </p-table>
-        <div class="flex justify-center">
+        <div *ngIf="documents()?.length" class="flex justify-center">
             <p-paginator (onPageChange)="onPageChange($event)" [first]="first()" [rows]="rows()"
                 [totalRecords]="totalRecords" [rowsPerPageOptions]="[5, 10, 20, 30]" [showCurrentPageReport]="true"
                 currentPageReportTemplate="Showing {{startItem()}} to {{endItem()}} of {{totalRecords}} rows" />

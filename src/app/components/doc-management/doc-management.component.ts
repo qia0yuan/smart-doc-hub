@@ -227,7 +227,7 @@ export class DocManagementComponent {
             type: 'Success',
             message: 'File(s) Uploaded',
         }));
-        // this.refreshTable$.next();
+        this.refreshTable$.next(this.filterObj());
     }
 
     onDownload(rows: Document[]) {
@@ -293,7 +293,7 @@ export class DocManagementComponent {
                                 message: 'File(s) Deleted successfully',
                             }));
                             this.selectedDocuments.set([]);
-                            // this.refreshTable$.next();
+                            this.refreshTable$.next(this.filterObj());
                         },
                         error: (err) => {
                             this.userService.showSpinner.set(false);
