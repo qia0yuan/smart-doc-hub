@@ -5,6 +5,7 @@ import {
     Signal,
     signal,
     untracked,
+    WritableSignal,
 } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { TableModule } from 'primeng/table';
@@ -17,15 +18,24 @@ import { User, UserSearch } from '../../models/models';
 import {
     BehaviorSubject,
     catchError,
+    debounceTime,
+    distinctUntilChanged,
     forkJoin,
     map,
     of,
+    Subject,
     switchMap,
     tap,
     throwError,
 } from 'rxjs';
 import { ConfirmationService } from 'primeng/api';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
+import { IconFieldModule } from 'primeng/iconfield';
+import { InputIconModule } from 'primeng/inputicon';
+import { InputTextModule } from 'primeng/inputtext';
+import { IftaLabelModule } from 'primeng/iftalabel';
+import { USER_FILTER } from '../../constants/common.constant';
+import { FormsModule } from '@angular/forms';
 
 @Component({
     selector: 'app-user-management',
@@ -35,6 +45,11 @@ import { PaginatorModule, PaginatorState } from 'primeng/paginator';
         ProfileComponent,
         CommonModule,
         PaginatorModule,
+        IconFieldModule,
+        InputIconModule,
+        InputTextModule,
+        IftaLabelModule,
+        FormsModule,
     ],
     templateUrl: './user-management.component.html',
     styleUrl: './user-management.component.scss',
@@ -53,6 +68,12 @@ export class UserManagementComponent {
     currentPage = signal<number>(0);
     accountId = signal<number | undefined>(0);
     filterObj = signal<UserSearch>({} as UserSearch);
+    filterCriteria = USER_FILTER; // Define the filter criteria for the table
+    firstname = signal<string | null>(null);
+    lastname = signal<string | null>(null);
+    emailid = signal<string | null>(null);
+    phonenumber = signal<string | null>(null);
+    search$ = new Subject<any>();
 
     constructor(
         private userService: UserService,
@@ -66,17 +87,17 @@ export class UserManagementComponent {
                 filters: {
                     id: null,
                     accountid: this.accountId() ?? 0,
-                    firstname: null,
-                    lastname: null,
+                    firstname: untracked(() => this.firstname()) || null,
+                    lastname: untracked(() => this.lastname()) || null,
                     address1: null,
                     address2: null,
-                    emailid: null,
-                    phonenumber: null,
+                    emailid: untracked(() => this.emailid()) || null,
+                    phonenumber: untracked(() => this.phonenumber()) || null,
                     role: null,
                     userid: null,
                     parentuserid: null,
                     usertype: null,
-                    subscriptiontype: null,
+                    subscriptiontype: 'subscriber',
                 },
                 sort: null,
                 pagenumber: this.currentPage() + 1,
@@ -92,9 +113,16 @@ export class UserManagementComponent {
                 switchMap((fObj: UserSearch) =>
                     this.apiService.getUserlist(fObj).pipe(
                         map((res: any) => {
-                            !this.totalRecords && (this.totalRecords = res.count);
+                            !this.totalRecords &&
+                                (this.totalRecords = res.count);
                             this.startItem.set(this.endItem() + 1);
-                            this.endItem.set(this.startItem() + (this.rows() < this.totalRecords ? this.rows() : this.totalRecords) - 1);
+                            this.endItem.set(
+                                this.startItem() +
+                                    (this.rows() < this.totalRecords
+                                        ? this.rows()
+                                        : this.totalRecords) -
+                                    1
+                            );
                             return res.data;
                         }),
                         catchError((err) => {
@@ -118,7 +146,25 @@ export class UserManagementComponent {
         });
     }
 
-    ngOnInit() {}
+    ngOnInit() {
+        this.search$
+            .pipe(
+                debounceTime(1000),
+                distinctUntilChanged(),
+                takeUntilDestroyed(this.destroyRef)
+            )
+            .subscribe((searchTerm: any) => {
+                this.resetPaginator();
+                this.filterObj.update((obj) => ({
+                    ...obj,
+                    filters: {
+                        ...obj.filters,
+                        [searchTerm?.id as keyof UserSearch['filters']]:
+                            searchTerm?.value || null,
+                    },
+                }));
+            });
+    }
 
     profileAction(action: string) {
         this.action.set(action);
@@ -202,5 +248,31 @@ export class UserManagementComponent {
         this.endItem.set(event.first ?? this.endItem());
         console.log(this.filterObj());
         this.refreshTable$.next(this.filterObj());
+    }
+
+    resetPaginator() {
+        this.first.set(0);
+        this.rows.set(5);
+        this.currentPage.set(0);
+        this.startItem.set(0);
+        this.endItem.set(0);
+        this.totalRecords = 0;
+    }
+
+    onChange(event: any) {
+        const searchTerm = Object.assign({}, event.target);
+        this.search$.next(searchTerm);
+    }
+
+    clearSearch(col: string) {
+        (this[col as keyof UserManagementComponent] as WritableSignal<string | null>).set(null);
+        this.resetPaginator();
+        this.filterObj.update((obj) => ({
+            ...obj,
+            filters: {
+                ...obj.filters,
+                [col]: null,
+            },
+        }));
     }
 }

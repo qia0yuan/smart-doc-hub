@@ -93,13 +93,13 @@ export class ShareComponent {
     }
 
     loadUserList() {
-        // const accountId = this.userService.user().currentUser?.accountid;
-        // this.isLoading.set(true);
-        // this.apiService.getUserlist(accountId).subscribe((res) => {
-        //     if (res.length) {
-        //         this.users.set(res);
-        //     }
-        //     this.isLoading.set(false);
-        // });
+        const accountId = this.userService.user().currentUser?.accountid;
+        this.isLoading.set(true);
+        this.apiService.getAllUserByAccount(accountId).subscribe((res) => {
+            if (res.length) {
+                this.users.set(res);
+            }
+            this.isLoading.set(false);
+        });
     }
 }

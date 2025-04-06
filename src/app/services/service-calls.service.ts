@@ -119,6 +119,13 @@ export class ServiceCallsService {
         return this.http.post<User[]>(url, filterObj);
     }
 
+    getAllUserByAccount(accountId: number): Observable<User[]> {
+        const url = this.getUrl(ENDPOINTS.USERS_LIST, {
+            account_id: accountId,
+        });
+        return this.http.get<User[]>(url);
+    }
+
     getDoclist(filterObj: DocSearch): Observable<Document[]> {
         const url = this.getUrl(ENDPOINTS.DOCUMENT_SEARCH);
         return this.http.post<Document[]>(url, filterObj);

@@ -5,6 +5,7 @@ import {
     signal,
     Signal,
     untracked,
+    WritableSignal,
 } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { TableModule } from 'primeng/table';
@@ -15,7 +16,11 @@ import { Dialog } from 'primeng/dialog';
 import { PrimeNG } from 'primeng/config';
 import { BadgeModule } from 'primeng/badge';
 import { UserService } from '../../services/user.service';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import {
+    takeUntilDestroyed,
+    toObservable,
+    toSignal,
+} from '@angular/core/rxjs-interop';
 import { ServiceCallsService } from '../../services/service-calls.service';
 import { HttpResponse } from '@angular/common/http';
 import { UtilService } from '../../services/util.service';
@@ -29,6 +34,10 @@ import {
     switchMap,
     tap,
     throwError,
+    debounceTime,
+    distinctUntilChanged,
+    Subject,
+    Observable,
 } from 'rxjs';
 import { DocSearch, Document } from '../../models/models';
 import { ShareComponent } from './share/share.component';
@@ -38,6 +47,8 @@ import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { InputTextModule } from 'primeng/inputtext';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
+import { IftaLabelModule } from 'primeng/iftalabel';
+import { DOCUMENT_FILTER } from '../../constants/common.constant';
 
 @Component({
     selector: 'app-doc-management',
@@ -56,6 +67,7 @@ import { PaginatorModule, PaginatorState } from 'primeng/paginator';
         InputIconModule,
         InputTextModule,
         PaginatorModule,
+        IftaLabelModule,
     ],
     templateUrl: './doc-management.component.html',
     styleUrl: './doc-management.component.scss',
@@ -87,6 +99,9 @@ export class DocManagementComponent {
     currentPage = signal<number>(0);
     userId = signal<number | undefined>(0);
     filterObj = signal<DocSearch>({} as DocSearch);
+    filterCriteria = DOCUMENT_FILTER;
+    sharedByUser = signal<string | null>(null);
+    search$ = new Subject<any>();
 
     constructor(
         private config: PrimeNG,
@@ -100,7 +115,7 @@ export class DocManagementComponent {
             this.filterObj.update((obj) => ({
                 ...obj,
                 filters: {
-                    sharedByUserId: null,
+                    sharedByUser: untracked(() => this.sharedByUser()) ?? null,
                     createdByUserId: this.userId() ?? 0,
                     title: null,
                     category: null,
@@ -155,7 +170,25 @@ export class DocManagementComponent {
         });
     }
 
-    ngOnInit() {}
+    ngOnInit() {
+        this.search$
+            .pipe(
+                debounceTime(1000),
+                distinctUntilChanged(),
+                takeUntilDestroyed(this.destroyRef)
+            )
+            .subscribe((searchTerm: any) => {
+                this.resetPaginator();
+                this.filterObj.update((obj) => ({
+                    ...obj,
+                    filters: {
+                        ...obj.filters,
+                        [searchTerm?.id as keyof DocSearch['filters']]:
+                            searchTerm?.value || null,
+                    },
+                }));
+            });
+    }
 
     choose(event: any, callback: () => void) {
         callback();
@@ -340,8 +373,9 @@ export class DocManagementComponent {
         });
     }
 
-    onChange(table: any, event: any) {
-        table.filterGlobal(event.target.value, 'contains');
+    onChange(event: any) {
+        const searchTerm = Object.assign({}, event.target);
+        this.search$.next(searchTerm);
     }
 
     onPageChange(event: PaginatorState) {
@@ -352,5 +386,30 @@ export class DocManagementComponent {
         this.endItem.set(event.first ?? this.endItem());
         console.log(this.filterObj());
         this.refreshTable$.next(this.filterObj());
+    }
+
+    clearSearch(col: string) {
+        (
+            this[col as keyof DocManagementComponent] as WritableSignal<
+                string | null
+            >
+        ).set(null);
+        this.resetPaginator();
+        this.filterObj.update((obj) => ({
+            ...obj,
+            filters: {
+                ...obj.filters,
+                [col]: null,
+            },
+        }));
+    }
+
+    resetPaginator() {
+        this.first.set(0);
+        this.rows.set(5);
+        this.currentPage.set(0);
+        this.startItem.set(0);
+        this.endItem.set(0);
+        this.totalRecords = 0;
     }
 }

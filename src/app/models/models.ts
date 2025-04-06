@@ -71,7 +71,7 @@ export interface UserSearch {
 
 export interface DocSearch {
     filters: {
-        sharedByUserId: any;
+        sharedByUser: any;
         createdByUserId: number;
         title: any;
         category: any;

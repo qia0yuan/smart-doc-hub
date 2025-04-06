@@ -15,6 +15,7 @@ export const ENDPOINTS = {
     INVITEE_DETAILS: 'invitation/user',
     ACCOUNT: 'account/',
     ACCOUNT_CRUD: 'account/{account_id}',
+    ALL_USER_BY_ACCOUNT: 'account/{account_id}/user',
     DOCUMENT_QUERRY: 'documents/',
     DOCUMENT_SEARCH: 'documents/search',
     DOCUMENTS_LIST: 'documents/files',

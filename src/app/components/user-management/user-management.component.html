@@ -1,8 +1,25 @@
 <div class="user-management-container">
-    <div class="flex gap-3 justify-content-end mb-3">
-        <p-button label="Create" (click)="profileAction('Create')"></p-button>
-        <p-button label="Update" (click)="profileAction('Update')"></p-button>
-        <p-button label="Delete" (click)="onDelete(selectedUsers())"></p-button>
+    <div class="flex gap-3 justify-content-between mb-3">
+        <div class="flex gap-3">
+            @for (criteria of filterCriteria; track criteria.id) {
+                <p-iftalabel variant="on">
+                    <p-iconfield iconPosition="left" class="mr-auto">
+                        <p-inputicon>
+                            <i class="pi pi-search"></i>
+                        </p-inputicon>
+                        <input [id]="criteria.id" pInputText type="text" [(ngModel)]="this[criteria.id]" (input)="onChange($event)" placeholder="Search" />
+                        <p-inputicon *ngIf="this[criteria.id]()" class="pi pi-times"
+                        style="cursor: pointer;" (click)="clearSearch(criteria.id)" />
+                    </p-iconfield>
+                    <label [for]="criteria.id">{{criteria.label}}</label>
+                </p-iftalabel>
+            }
+        </div>
+        <div class="flex gap-3 justify-content-end mb-3">
+            <p-button label="Create" (click)="profileAction('Create')"></p-button>
+            <p-button label="Update" (click)="profileAction('Update')"></p-button>
+            <p-button label="Delete" (click)="onDelete(selectedUsers())"></p-button>
+        </div>
     </div>
     <div class="card">
         <p-table [value]="users() || []" [(selection)]="selectedUsers" dataKey="id"
@@ -50,4 +67,5 @@
         </div>
     </div>
 </div>
-<app-profile [action]="action()" from="subscriber" (closed)="action.set('');refreshTable$.next(filterObj())"></app-profile>
+<app-profile [action]="action()" from="subscriber"
+    (closed)="action.set('');refreshTable$.next(filterObj())"></app-profile>
