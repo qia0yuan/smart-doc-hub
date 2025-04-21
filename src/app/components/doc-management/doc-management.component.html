@@ -7,9 +7,9 @@
                     <p-inputicon>
                         <i class="pi pi-search"></i>
                     </p-inputicon>
-                    <input [id]="criteria.id" pInputText type="text" [(ngModel)]="this[criteria.id]"
+                    <input [id]="criteria.id" pInputText type="text" [(ngModel)]="searchField[criteria.id]"
                         (input)="onChange($event)" placeholder="Search" />
-                    <p-inputicon *ngIf="this[criteria.id]()" class="pi pi-times" style="cursor: pointer;"
+                    <p-inputicon *ngIf="searchField[criteria.id]()" class="pi pi-times" style="cursor: pointer;"
                         (click)="clearSearch(criteria.id)" />
                 </p-iconfield>
                 <label [for]="criteria.id">{{criteria.label}}</label>
@@ -31,6 +31,8 @@
                     <th style="width: 4rem"><p-tableHeaderCheckbox /></th>
                     <th>Title</th>
                     <th>Description</th>
+                    <th>Category</th>
+                    <th>Subcategory</th>
                     <th>Created By</th>
                     <th>Updated By</th>
                     <th>Shared By</th>
@@ -45,6 +47,8 @@
                     </td>
                     <td>{{document.title}}</td>
                     <td>{{document.description}}</td>
+                    <td>{{document.category}}</td>
+                    <td>{{document.subcategory}}</td>
                     <td>{{document.createdby}}</td>
                     <td>{{document.updatedby}}</td>
                     <td>{{document.sharedBy}}</td>
@@ -79,8 +83,8 @@
                         <p-button (onClick)="clearCallback()" icon="pi pi-times" [rounded]="true" [outlined]="true"
                             severity="danger" [disabled]="!files || files.length === 0" />
                     </div>
-                    <p-select [options]="fileTypeOptions" [(ngModel)]="selectedFileType" optionLabel="label"
-                        placeholder="Select a type" size="small" class="w-full md:w-56" />
+                    <!-- <p-select [options]="fileTypeOptions" [(ngModel)]="selectedFileType" optionLabel="label"
+                        placeholder="Select a type" size="small" class="w-full md:w-56" /> -->
                 </div>
             </ng-template>
             <ng-template #empty>
@@ -92,12 +96,15 @@
             <ng-template #content let-files let-uploadedFiles="uploadedFiles"
                 let-removeFileCallback="removeFileCallback" let-removeUploadedFileCallback="removeUploadedFileCallback">
                 <div class="flex flex-col">
-                    <div *ngIf="files?.length > 0; else empty">
+                    <div *ngIf="files?.length > 0">
                         <ng-container *ngFor="let file of files; let i = index">
                             <div class="file-list">
                                 <span class="font-semibold text-ellipsis max-w-60 whitespace-nowrap overflow-hidden">{{
                                     file.name }}</span>
                                 <span>{{ formatSize(file.size) }}</span>
+                                <p-treeselect class="w-3/4" containerStyleClass="w-full" appendTo="body"
+                                    [(ngModel)]="selectedNodes[file.name]" [options]="nodes" placeholder="Select Type"
+                                    size="small" />
                                 <p-button icon="pi pi-times"
                                     (click)="onRemoveTemplatingFile($event, file, removeFileCallback, i)"
                                     [rounded]="true" [text]="true" severity="danger" />

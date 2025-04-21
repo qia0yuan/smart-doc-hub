@@ -4,9 +4,12 @@
 
 .file-list {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: 150px 80px 1fr 40px;
     align-items: center;
     p-button, & > span:nth-child(2) {
         justify-self: end;
+    }
+    p-treeselect {
+        justify-self: center;
     }
 }

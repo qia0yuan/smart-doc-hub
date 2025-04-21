@@ -48,7 +48,8 @@ import { InputIconModule } from 'primeng/inputicon';
 import { InputTextModule } from 'primeng/inputtext';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { IftaLabelModule } from 'primeng/iftalabel';
-import { DOCUMENT_FILTER } from '../../constants/common.constant';
+import { DOCUMENT_FILTER, DOCUMENT_TYPE_FILTER } from '../../constants/common.constant';
+import { TreeSelectModule } from 'primeng/treeselect';
 
 @Component({
     selector: 'app-doc-management',
@@ -68,6 +69,7 @@ import { DOCUMENT_FILTER } from '../../constants/common.constant';
         InputTextModule,
         PaginatorModule,
         IftaLabelModule,
+        TreeSelectModule,
     ],
     templateUrl: './doc-management.component.html',
     styleUrl: './doc-management.component.scss',
@@ -80,13 +82,13 @@ export class DocManagementComponent {
     totalSize: number = 0;
     totalSizePercent: number = 0;
     share = signal<Document[]>([]);
-    fileTypeOptions = [
-        { label: 'All', value: 'All' },
-        { label: 'Images', value: 'Image' },
-        { label: 'Videos', value: 'Video' },
-        { label: 'Documents', value: 'Document' },
-        { label: 'Audio', value: 'Audio' },
-    ];
+    // fileTypeOptions = [
+    //     { label: 'All', value: 'All' },
+    //     { label: 'Images', value: 'Image' },
+    //     { label: 'Videos', value: 'Video' },
+    //     { label: 'Documents', value: 'Document' },
+    //     { label: 'Audio', value: 'Audio' },
+    // ];
     selectedFileType = signal<string>('All');
     refreshTable$: BehaviorSubject<DocSearch> = new BehaviorSubject<DocSearch>(
         {} as DocSearch
@@ -100,8 +102,11 @@ export class DocManagementComponent {
     userId = signal<number | undefined>(0);
     filterObj = signal<DocSearch>({} as DocSearch);
     filterCriteria = DOCUMENT_FILTER;
+    searchField: Record<string, ReturnType<typeof signal<string | null>>> = {};
     sharedByUser = signal<string | null>(null);
     search$ = new Subject<any>();
+    selectedNodes: Record<string, any> = {};
+    nodes = DOCUMENT_TYPE_FILTER;
 
     constructor(
         private config: PrimeNG,
@@ -115,12 +120,13 @@ export class DocManagementComponent {
             this.filterObj.update((obj) => ({
                 ...obj,
                 filters: {
-                    sharedByUser: untracked(() => this.sharedByUser()) ?? null,
+                    ...Object.keys(this.searchField).reduce(
+                        (acc, key) => {
+                            acc[key] = untracked(() => this.searchField[key]()) ?? null;
+                            return acc;
+                        }, {} as Record<string, string | null>),
                     createdByUserId: this.userId() ?? 0,
-                    title: null,
-                    category: null,
-                    subcategory: null,
-                },
+                } as Record<keyof DocSearch['filters'], any>,
                 sort: {
                     docid: '',
                 },
@@ -142,10 +148,10 @@ export class DocManagementComponent {
                             this.startItem.set(this.endItem() + 1);
                             this.endItem.set(
                                 this.startItem() +
-                                    (this.rows() < this.totalRecords
-                                        ? this.rows()
-                                        : this.totalRecords) -
-                                    1
+                                (this.rows() < this.totalRecords
+                                    ? this.rows()
+                                    : this.totalRecords) -
+                                1
                             );
                             return res.data;
                         }),
@@ -171,6 +177,9 @@ export class DocManagementComponent {
     }
 
     ngOnInit() {
+        DOCUMENT_FILTER.forEach((filter) => {
+            this.searchField[filter.id] = signal<string | null>(null);
+        });
         this.search$
             .pipe(
                 debounceTime(1000),
@@ -199,6 +208,8 @@ export class DocManagementComponent {
         for (let file of this.uploadedFiles) {
             const formData = new FormData();
             formData.append('file', file);
+            formData.append('category', this.selectedNodes[file.name].parent ? this.selectedNodes[file.name].parent.label : this.selectedNodes[file.name].label);
+            formData.append('subcategory', this.selectedNodes[file.name].parent ? this.selectedNodes[file.name].label : null);
             filesToUpload.push(this.apiService.uploadDocument(formData));
             this.totalSize += parseInt(this.formatSize(file.size));
         }
@@ -313,8 +324,8 @@ export class DocManagementComponent {
 
     onDelete(rows: Document[]) {
         const selectedDocs = rows.map((row) =>
-                this.apiService.deleteDocument(row.id)
-            ),
+            this.apiService.deleteDocument(row.id)
+        ),
             callback = () => {
                 this.userService.showSpinner.set(true);
                 forkJoin(selectedDocs)
@@ -390,7 +401,7 @@ export class DocManagementComponent {
 
     clearSearch(col: string) {
         (
-            this[col as keyof DocManagementComponent] as WritableSignal<
+            this.searchField[col as keyof DocManagementComponent] as WritableSignal<
                 string | null
             >
         ).set(null);
