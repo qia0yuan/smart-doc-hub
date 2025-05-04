@@ -1,6 +1,6 @@
 <div class="user-management-container">
-    <div class="flex gap-3 justify-content-between mb-3">
-        <div class="flex gap-3">
+    <div class="flex gap-3 justify-content-between mb-3 flex-wrap">
+        <div class="flex gap-3 flex-wrap">
             @for (criteria of filterCriteria; track criteria.id) {
                 <p-iftalabel variant="on">
                     <p-iconfield iconPosition="left" class="mr-auto">
@@ -15,7 +15,7 @@
                 </p-iftalabel>
             }
         </div>
-        <div class="flex gap-3 justify-content-end mb-3">
+        <div class="flex gap-3 justify-content-end mb-3 flex-wrap">
             <p-button label="Create" (click)="profileAction('Create')"></p-button>
             <p-button label="Update" (click)="profileAction('Update')"></p-button>
             <p-button label="Delete" (click)="onDelete(selectedUsers())"></p-button>

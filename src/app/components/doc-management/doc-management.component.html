@@ -1,6 +1,6 @@
 <div class="doc-management-container">
-    <div class="flex gap-3 justify-content-between mb-3">
-        <div class="flex gap-3">
+    <div class="flex gap-3 justify-content-between mb-3 flex-wrap">
+        <div class="flex gap-3 flex-wrap">
             @for (criteria of filterCriteria; track criteria.id) {
             <p-iftalabel variant="on">
                 <p-iconfield iconPosition="left" class="mr-auto">
@@ -16,7 +16,7 @@
             </p-iftalabel>
             }
         </div>
-        <div class="flex gap-3 justify-content-end mb-3">
+        <div class="flex gap-3 justify-content-end mb-3 flex-wrap">
             <p-button label="Upload" [disabled]="!documents()" (click)="visible.set(true)"></p-button>
             <p-button label="Download" [disabled]="!documents()" (click)="onDownload(selectedDocuments())"></p-button>
             <p-button label="Share" [disabled]="!documents()" (click)="onShare(selectedDocuments())"></p-button>
