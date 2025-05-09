@@ -47,3 +47,16 @@ p-table {
         }
     }
 }
+
+:root {
+    --p-button-primary-background: var(--p-blue-500) !important;
+    --p-button-primary-border-color: var(--p-blue-500) !important;
+    --p-button-primary-hover-background: var(--p-blue-600) !important;
+    --p-button-primary-hover-border-color: var(--p-blue-600) !important;    
+    --p-primary-color: var(--p-blue-500) !important;
+    --p-primary-color-hover: var(--p-blue-600) !important;
+    --p-inputtext-focus-border-color: var(--p-blue-600) !important;
+    --p-inputtext-focus-box-shadow: 0 0 0 0.2rem rgba(37, 99, 235, 0.25) !important;
+    --p-inputtext-focus-ring-shadow: 0 0 0 0.2rem rgba(37, 99, 235, 0.25) !important;
+    --p-inputtext-focus-background: var(--p-blue-50) !important;
+}    
