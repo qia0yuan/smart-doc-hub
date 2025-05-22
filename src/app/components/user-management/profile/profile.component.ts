@@ -16,6 +16,7 @@ import { ServiceCallsService } from '../../../services/service-calls.service';
 import { User } from '../../../models/models';
 import { Router } from '@angular/router';
 import { AccordionModule } from 'primeng/accordion';
+import { FileUploadModule } from 'primeng/fileupload';
 
 @Component({
     selector: 'app-profile',
@@ -28,6 +29,7 @@ import { AccordionModule } from 'primeng/accordion';
         ReactiveFormsModule,
         CommonModule,
         AccordionModule,
+        FileUploadModule,
     ],
     templateUrl: './profile.component.html',
     styleUrl: './profile.component.scss',
@@ -41,6 +43,9 @@ export class ProfileComponent {
         !this.visible() && this.closed.emit();
     });
     userProfileForm!: FormGroup;
+    btnTxt = signal<string>('Bulk Invite');
+    btnIcon = signal<string>('users');
+    uploadedFiles = signal<File[]>([]);
 
     constructor(
         private fb: FormBuilder,
@@ -255,5 +260,38 @@ export class ProfileComponent {
                 },
             });
         }
+    }
+
+    createModeChange() {
+        if (this.btnIcon() === 'users') {
+            this.btnIcon.set('user');
+            this.btnTxt.set('Create User');
+        }  else {
+            this.btnIcon.set('users');
+            this.btnTxt.set('Bulk Invite');
+        }
+    }
+
+    onUpload(event: any) {
+        console.log(event);
+    }
+
+    onSend(event: any) {
+        console.log(event);
+    }
+
+    onUploadHandler(event: any) {
+        console.log(event);
+        const formData = new FormData();
+        formData.append('file', event.files[0]);
+        this.apiService
+            .uploadBulkUser(formData)
+            .subscribe((response) => {
+                console.log('File uploaded successfully', response);
+            });
+    }
+
+    onSelect(event: any) {
+
     }
 }

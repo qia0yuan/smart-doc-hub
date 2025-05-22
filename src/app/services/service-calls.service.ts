@@ -149,6 +149,11 @@ export class ServiceCallsService {
         return this.http.post<any>(url, formData);
     }
 
+    uploadBulkUser(formData: FormData): Observable<any> {
+        const url = this.getUrl(ENDPOINTS.BULK_USER_UPLOAD);    
+        return this.http.post<any>(url, formData);
+    }
+
     downloadDocument(id: number): Observable<any> {
         const url = this.getUrl(ENDPOINTS.DOCUMENT_DOWNLOAD, { doc_id: id }),
             options = {

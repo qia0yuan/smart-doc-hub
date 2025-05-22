@@ -9,4 +9,11 @@
             background: unset !important;
         }
     }
+
+    .p-fileupload-header {
+        padding: 0.5rem 1rem;
+        button {
+            height: 2.2rem;
+        }
+    }
 }

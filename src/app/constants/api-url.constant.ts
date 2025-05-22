@@ -7,6 +7,7 @@ export const ENDPOINTS = {
     USER_LOGIN: 'user/token',
     USER: 'user/',
     USER_SEARCH: 'user/search',
+    BULK_USER_UPLOAD: 'user/upload',
     USERS_LIST: 'account/{account_id}/user',
     INVITEE: 'invitee/',
     INVITEE_CRUD: 'invitee/{invitee_id}',
