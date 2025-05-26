@@ -60,3 +60,22 @@ p-table {
     --p-inputtext-focus-ring-shadow: 0 0 0 0.2rem rgba(37, 99, 235, 0.25) !important;
     --p-inputtext-focus-background: var(--p-blue-50) !important;
 }    
+
+p-fileupload {
+    .p-fileupload-choose-button {
+        &.choose-off {
+            color: var(--p-button-outlined-secondary-color) !important;
+        }
+        &.choose-on {
+            color: var(--p-button-outlined-primary-color) !important;
+        }
+    }
+    .p-fileupload-upload-button {
+        &.upload-on {
+            color: var(--p-button-outlined-primary-color) !important;
+        }
+        &.upload-off {
+            color: var(--p-button-outlined-secondary-color) !important;
+        }
+    }
+}

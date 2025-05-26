@@ -43,9 +43,9 @@ export class ProfileComponent {
         !this.visible() && this.closed.emit();
     });
     userProfileForm!: FormGroup;
-    btnTxt = signal<string>('Bulk Invite');
-    btnIcon = signal<string>('users');
     uploadedFiles = signal<File[]>([]);
+    chooseStyleClass = signal<string>('p-button-rounded p-button-outlined');
+    uploadStyleClass = signal<string>('p-button-rounded p-button-outlined');
 
     constructor(
         private fb: FormBuilder,
@@ -150,6 +150,8 @@ export class ProfileComponent {
                               userid: [''],
                           }),
                       })
+                    : this.action() === 'Bulk upload'
+                    ? (this.onDeselect(null), this.fb.group({}))
                     : this.fb.group({
                           firstname: ['', [Validators.required]],
                           lastname: ['', [Validators.required]],
@@ -181,8 +183,8 @@ export class ProfileComponent {
         this.userProfileForm.get(field1)?.reset();
     }
 
-    onSubmit() {
-        if (this.userProfileForm.valid) {
+    onSubmit(extra?: any) {
+        if (this.userProfileForm.valid || this.action() === 'Bulk upload') {
             const user: User = {
                     accountid:
                         this.userService.user().currentUser?.accountid || 50,
@@ -235,7 +237,9 @@ export class ProfileComponent {
                 userId = this.userService.user().currentUser?.id,
                 create$ =
                     this.from() === 'invitee'
-                        ? this.apiService.createInvitee(user)
+                        ? this.action() === 'Bulk upload'
+                        ? this.apiService.uploadBulkUser(extra)
+                        : this.apiService.createInvitee(user)
                         : this.from() === 'subscriber'
                         ? this.apiService.createUser(user)
                         : this.from() === 'login'
@@ -262,16 +266,6 @@ export class ProfileComponent {
         }
     }
 
-    createModeChange() {
-        if (this.btnIcon() === 'users') {
-            this.btnIcon.set('user');
-            this.btnTxt.set('Create User');
-        }  else {
-            this.btnIcon.set('users');
-            this.btnTxt.set('Bulk Invite');
-        }
-    }
-
     onUpload(event: any) {
         console.log(event);
     }
@@ -284,14 +278,16 @@ export class ProfileComponent {
         console.log(event);
         const formData = new FormData();
         formData.append('file', event.files[0]);
-        this.apiService
-            .uploadBulkUser(formData)
-            .subscribe((response) => {
-                console.log('File uploaded successfully', response);
-            });
+        this.onSubmit(formData);
     }
 
     onSelect(event: any) {
+        this.chooseStyleClass.set('p-button-rounded p-button-outlined choose-off');
+        this.uploadStyleClass.set('p-button-rounded p-button-outlined upload-on');
+    }
 
+    onDeselect(event: any) {
+        this.chooseStyleClass.set('p-button-rounded p-button-outlined choose-on');
+        this.uploadStyleClass.set('p-button-rounded p-button-outlined upload-off');
     }
 }

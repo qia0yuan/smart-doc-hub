@@ -5,19 +5,9 @@
   [style]="{ width: '40rem' }"
 >
   <form [formGroup]="userProfileForm" (ngSubmit)="onSubmit()">
-    <div
-      class="p-text-secondary mb-4 flex justify-content-between align-items-center"
+    <span class="p-text-secondary block mb-4"
+      >{{ action() }} your information.</span
     >
-      <span>{{ action() }} your information.</span>
-      @if (from() === 'invitee') {
-      <p-button
-        [label]="btnTxt()"
-        icon="pi pi-{{ btnIcon() }}"
-        size="small"
-        (onClick)="createModeChange()"
-      />
-      }
-    </div>
     @if (from() === 'login') {
     <div class="flex items-center gap-4 mb-4">
       <label for="email" class="font-semibold w-24 field-required"
@@ -513,15 +503,23 @@
         </p-accordion-content>
       </p-accordion-panel>
     </p-accordion>
-    } @else if (from() === 'invitee' && btnIcon() === 'user') {
+    } @else if (from() === 'invitee' && action() === 'Bulk upload') {
     <p-fileUpload
-      (onUpload)="onUpload($event)" (onSend)="onSend($event)" (uploadHandler)="onUploadHandler($event)" (onSelect)="onSelect($event)"
+      (onUpload)="onUpload($event)"
+      (onSend)="onSend($event)"
+      (uploadHandler)="onUploadHandler($event)"
+      (onSelect)="onSelect($event)"
+      (onRemove)="onDeselect($event)"
+      (onClear)="onDeselect($event)"
       customUpload
       maxFileSize="1000000"
-      chooseStyleClass="p-button-rounded p-button-outlined"
-      uploadStyleClass="p-button-rounded p-button-outlined"
+      [chooseStyleClass]="chooseStyleClass()"
+      [uploadStyleClass]="uploadStyleClass()"
       cancelStyleClass="p-button-rounded p-button-outlined"
     >
+    <ng-template #empty>
+        <div>Drag and drop files to here to upload.</div>
+    </ng-template>
       <ng-template pTemplate="content">
         <ul *ngIf="uploadedFiles.length">
           <li *ngFor="let file of uploadedFiles()">
@@ -705,16 +703,15 @@
         />
       </p-iconfield>
     </div>
-    }
-    @if (this.btnIcon() === 'users') {
-        <div class="flex justify-end gap-2 mt-8">
-          <p-button
-            label="Cancel"
-            severity="secondary"
-            (click)="onBtnClick('cancel')"
-          />
-          <p-button label="Save" type="submit" />
-        </div>
+    } @if (this.action() !== 'Bulk upload') {
+    <div class="flex justify-end gap-2 mt-8">
+      <p-button
+        label="Cancel"
+        severity="secondary"
+        (click)="onBtnClick('cancel')"
+      />
+      <p-button label="Save" type="submit" />
+    </div>
     }
   </form>
 </p-dialog>
